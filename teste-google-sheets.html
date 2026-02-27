@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dados da Secretaria</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        /* Estilos para Tabela Responsiva em Mobile (Card View) */
+        @media (max-width: 991px) {
+            /* Transforma a tabela em blocos */
+            #tabelaDados, #tabelaDados thead, #tabelaDados tbody, #tabelaDados th, #tabelaDados td, #tabelaDados tr { 
+                display: block; 
+            }
+            
+            /* Esconde o cabeçalho original */
+            #tabelaDados thead tr { 
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            
+            #tabelaDados tr { 
+                border: 1px solid #ccc; 
+                margin-bottom: 1rem;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            
+            #tabelaDados td { 
+                /* Layout da célula como linha */
+                border: none;
+                border-bottom: 1px solid #eee; 
+                position: relative;
+                padding-left: 50% !important; 
+                text-align: right;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+            
+            #tabelaDados td:before { 
+                /* Rótulo da coluna (via data-label) */
+                position: absolute;
+                top: 50%;
+                left: 1rem;
+                transform: translateY(-50%);
+                width: 45%; 
+                padding-right: 10px; 
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                content: attr(data-label);
+            }
+
+            #tabelaDados td:last-child {
+                border-bottom: 0;
+            }
+        }
+
+        /* Ajuste para paginação não quebrar em telas pequenas */
+        .pagination {
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <!-- Sidebar Mobile (Offcanvas) -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFiltros" aria-labelledby="offcanvasFiltrosLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasFiltrosLabel">Filtros</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form id="form-filtros-mobile">
+                <div class="mb-3">
+                    <label for="filtro-secretaria-mob" class="form-label">Secretaria</label>
+                    <input type="text" class="form-control" id="filtro-secretaria-mob" name="secretaria" placeholder="Ex: SAUDE">
+                </div>
+                <div class="mb-3">
+                    <label for="filtro-agrupamento-mob" class="form-label">Agrupamento</label>
+                    <input type="text" class="form-control" id="filtro-agrupamento-mob" name="agrupamento">
+                </div>
+                <div class="mb-3">
+                    <label for="filtro-responsavel-mob" class="form-label">Responsável</label>
+                    <input type="text" class="form-control" id="filtro-responsavel-mob" name="responsavel">
+                </div>
+                <div class="mb-3">
+                    <label for="filtro-data-mob" class="form-label">Data</label>
+                    <input type="text" class="form-control flatpickr-input" id="filtro-data-mob" name="data" placeholder="Selecione a data">
+                </div>
+                <button type="button" class="btn btn-primary w-100 btn-aplicar-filtro">Aplicar Filtros</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="mb-4">📊 Dados da Planilha</h2>
+        
+        <!-- Botão Toggle Mobile (Visível apenas em telas menores que LG) -->
+        <button class="btn btn-primary d-lg-none mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltros">
+            <i class="bi bi-funnel-fill"></i> Filtros
+        </button>
+
+        <!-- Filtros Desktop (Visível apenas em telas LG ou maiores) -->
+        <div class="card p-3 mb-4 d-none d-lg-block bg-light shadow-sm">
+            <h5 class="card-title mb-3"><i class="bi bi-funnel"></i> Filtros</h5>
+            <form id="form-filtros-desktop" class="row g-3">
+                <div class="col-md-3">
+                    <label for="filtro-secretaria" class="form-label">Secretaria</label>
+                    <input type="text" class="form-control" id="filtro-secretaria" name="secretaria" placeholder="Ex: SAUDE">
+                </div>
+                <div class="col-md-3">
+                    <label for="filtro-agrupamento" class="form-label">Agrupamento</label>
+                    <input type="text" class="form-control" id="filtro-agrupamento" name="agrupamento">
+                </div>
+                <div class="col-md-2">
+                    <label for="filtro-responsavel" class="form-label">Responsável</label>
+                    <input type="text" class="form-control" id="filtro-responsavel" name="responsavel">
+                </div>
+                <div class="col-md-2">
+                    <label for="filtro-data" class="form-label">Data</label>
+                    <input type="text" class="form-control flatpickr-input" id="filtro-data" name="data" placeholder="Selecione a data">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-primary w-100 btn-aplicar-filtro">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela para Exibir os Dados -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="tabelaDados">
+                <thead class="table-dark">
+                    <!-- Cabeçalho será preenchido via JS -->
+                </thead>
+                <tbody>
+                    <!-- Linhas serão preenchidas via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Controles de Paginação -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" id="pagination-wrapper">
+                <!-- Controles serão inseridos aqui via JS -->
+            </ul>
+        </nav>
+
+        <!-- Status do Carregamento -->
+        <div id="status" class="alert alert-info">Carregando dados...</div>
+    </div>
+
+    <!-- Biblioteca PapaParse (O Tradutor de CSV) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
+
+    <script>
+        // --- Configurações ---
+        const URL_PLANILHA = 'https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/gviz/tq?tqx=out:csv&gid=0'
+        const LINHAS_POR_PAGINA = 10;
+
+        // --- Variáveis de Estado ---
+        let todosOsDados = [];
+        let dadosFiltrados = [];
+        let paginaAtual = 1;
+
+        // --- Seletores de Elementos ---
+        const tabelaBody = document.querySelector('#tabelaDados tbody');
+        const tabelaHead = document.querySelector('#tabelaDados thead');
+        const statusDiv = document.querySelector('#status');
+        const paginationWrapper = document.getElementById('pagination-wrapper');
+
+        // --- Inicialização do Flatpickr ---
+        flatpickr(".flatpickr-input", {
+            locale: "pt",
+            dateFormat: "d/m/Y"
+        });
+
+        // --- Event Listeners dos Filtros ---
+        document.querySelectorAll('.btn-aplicar-filtro').forEach(button => {
+            button.addEventListener('click', (event) => {
+                // Identifica o formulário pai do botão clicado (Desktop ou Mobile)
+                const form = event.target.closest('form');
+                const formData = new FormData(form);
+                const filtros = {};
+                
+                formData.forEach((value, key) => {
+                    filtros[key] = value;
+                });
+
+                // --- Lógica de Filtragem ---
+                dadosFiltrados = todosOsDados.filter(linha => {
+                    return Object.keys(filtros).every(filtroKey => {
+                        const valorFiltro = filtros[filtroKey].toLowerCase();
+                        if (!valorFiltro) return true; // Se o filtro estiver vazio, passa
+
+                        // Normaliza strings para ignorar acentos (ex: 'Responsável' vs 'responsavel')
+                        const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+                        // Encontra a coluna correspondente no CSV (ex: input 'secretaria' busca coluna 'Secretaria')
+                        const colunaCorrespondente = Object.keys(linha).find(colunaNome => 
+                            normalizar(colunaNome).includes(normalizar(filtroKey))
+                        );
+
+                        if (colunaCorrespondente) {
+                            const valorCelula = String(linha[colunaCorrespondente]).toLowerCase().trim();
+                            
+                            // Lógica Avançada para Data (Compara números para evitar erros de formato)
+                            if (filtroKey.includes('data') && valorFiltro.includes('/')) {
+                                // Filtro vem do Flatpickr como DD/MM/AAAA
+                                const [fDia, fMes, fAno] = valorFiltro.split('/');
+                                
+                                // Tenta extrair a data da célula (ignora hora se houver)
+                                const dataLimpa = valorCelula.split(' ')[0];
+                                let cDia, cMes, cAno;
+
+                                if (dataLimpa.includes('-')) {
+                                    [cAno, cMes, cDia] = dataLimpa.split('-'); // Formato ISO: AAAA-MM-DD
+                                } else if (dataLimpa.includes('/')) {
+                                    const partes = dataLimpa.split('/');
+                                    // Google Sheets pode exportar como M/D/AAAA (ano com 4 dígitos na posição [2])
+                                    // Esta verificação diferencia o formato americano do brasileiro.
+                                    if (partes[2] && partes[2].length === 4) {
+                                        [cMes, cDia, cAno] = partes; // Formato americano: M/D/AAAA
+                                    } else {
+                                        [cDia, cMes, cAno] = partes; // Formato brasileiro: DD/MM/AAAA
+                                    }
+                                }
+
+                                // Compara os valores numéricos (resolve problemas de 02 vs 2)
+                                if (cDia && cMes && cAno) {
+                                    return parseInt(cDia) === parseInt(fDia) &&
+                                           parseInt(cMes) === parseInt(fMes) &&
+                                           parseInt(cAno) === parseInt(fAno);
+                                }
+                            }
+
+                            return valorCelula.includes(valorFiltro);
+                        }
+                        return false; // Se não achar a coluna, o item não passa no filtro
+                    });
+                });
+
+                renderizarPagina(1); // Volta para a primeira página com os novos dados
+            });
+        });
+
+        /**
+         * Renderiza uma página específica da tabela.
+         */
+        function renderizarPagina(pagina) {
+            paginaAtual = pagina;
+            tabelaBody.innerHTML = ''; // Limpa a tabela
+
+            if (dadosFiltrados.length === 0) {
+                tabelaBody.innerHTML = '<tr><td colspan="100%" class="text-center p-4">Nenhum registro encontrado.</td></tr>';
+                renderizarControlesPaginacao();
+                return;
+            }
+
+            const inicio = (pagina - 1) * LINHAS_POR_PAGINA;
+            const fim = inicio + LINHAS_POR_PAGINA;
+            const dadosDaPagina = dadosFiltrados.slice(inicio, fim);
+
+            // Usa os cabeçalhos originais para manter a estrutura
+            const colunas = Object.keys(todosOsDados[0] || {});
+            let htmlBody = '';
+            dadosDaPagina.forEach(linha => {
+                htmlBody += '<tr>';
+                colunas.forEach(col => htmlBody += `<td data-label="${col}">${linha[col] || ''}</td>`);
+                htmlBody += '</tr>';
+            });
+            tabelaBody.innerHTML = htmlBody;
+
+            renderizarControlesPaginacao();
+        }
+
+        /**
+         * Cria e atualiza os botões de paginação.
+         */
+        function renderizarControlesPaginacao() {
+            paginationWrapper.innerHTML = '';
+            const totalPaginas = Math.ceil(dadosFiltrados.length / LINHAS_POR_PAGINA);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === paginaAtual ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                li.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    renderizarPagina(i);
+                });
+                paginationWrapper.appendChild(li);
+            }
+        }
+
+        // --- Lógica Principal ---
+        Papa.parse(URL_PLANILHA, {
+            download: true,       // Baixa o arquivo
+            header: true,         // Usa a 1ª linha como nome das colunas
+            complete: function(resultados) {
+                statusDiv.style.display = 'none';
+
+                // Filtra linhas vazias que o PapaParse pode retornar
+                todosOsDados = resultados.data.filter(linha => 
+                    Object.values(linha).some(valor => valor && valor.trim() !== '')
+                );
+                dadosFiltrados = [...todosOsDados]; // Inicializa com todos os dados
+
+                if (todosOsDados.length > 0) {
+                    // Cria o cabeçalho da tabela dinamicamente
+                    const colunas = Object.keys(todosOsDados[0]);
+                    let htmlHead = '<tr>';
+                    colunas.forEach(col => htmlHead += `<th>${col}</th>`);
+                    htmlHead += '</tr>';
+                    tabelaHead.innerHTML = htmlHead;
+                    console.log("Colunas encontradas na aba Transações:", colunas);
+
+                    // Renderiza a primeira página
+                    renderizarPagina(1);
+                }
+            },
+            error: function(erro) {
+                statusDiv.className = 'alert alert-danger';
+                statusDiv.innerText = 'Erro ao carregar: ' + erro.message;
+            }
+        });
+    </script>
+</body>
+</html>

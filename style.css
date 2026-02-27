@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+/* Só agora vêm os outros estilos */
+.nunito {
+  font-family: "Nunito", sans-serif;
+}
+
+header{
+    background: linear-gradient(45deg, #3399CC, #1A4D66);
+}
+.full-height{
+    height: 740px;
+}
