@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dados da Secretaria</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -32,19 +33,22 @@
             #tabelaDados td { 
                 /* Layout da célula como linha */
                 border: none;
-                border-bottom: 1px solid #eee; 
+                border-bottom: 1px solid #dee2e6; 
                 position: relative;
-                padding-left: 50% !important; 
+                padding: 1rem 1rem 1rem 50% !important; /* Aumenta o espaçamento interno */
                 text-align: right;
                 white-space: normal;
                 word-wrap: break-word;
+                font-size: 1.1rem; /* Aumenta o tamanho da fonte do valor */
+                line-height: 1.5; /* Melhora a legibilidade */
+                min-height: 45px; /* Altura mínima para toque */
             }
             
             #tabelaDados td:before { 
                 /* Rótulo da coluna (via data-label) */
                 position: absolute;
                 top: 50%;
-                left: 1rem;
+                left: 1.25rem; /* Afasta um pouco da borda */
                 transform: translateY(-50%);
                 width: 45%; 
                 padding-right: 10px; 
@@ -52,6 +56,8 @@
                 text-align: left;
                 font-weight: bold;
                 content: attr(data-label);
+                font-size: 1rem; /* Aumenta o tamanho da fonte do rótulo */
+                color: #495057;
             }
 
             #tabelaDados td:last-child {
@@ -65,7 +71,7 @@
         }
     </style>
 </head>
-<body class="p-4">
+<body class="p-2 p-lg-4 bg-light">
 
     <!-- Sidebar Mobile (Offcanvas) -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFiltros" aria-labelledby="offcanvasFiltrosLabel">
@@ -76,22 +82,22 @@
         <div class="offcanvas-body">
             <form id="form-filtros-mobile">
                 <div class="mb-3">
-                    <label for="filtro-secretaria-mob" class="form-label">Secretaria</label>
-                    <input type="text" class="form-control" id="filtro-secretaria-mob" name="secretaria" placeholder="Ex: SAUDE">
+                    <label for="filtro-secretaria-mob" class="form-label fs-5">Secretaria</label>
+                    <input type="text" class="form-control form-control-lg" id="filtro-secretaria-mob" name="secretaria" placeholder="Ex: SAUDE">
                 </div>
                 <div class="mb-3">
-                    <label for="filtro-agrupamento-mob" class="form-label">Agrupamento</label>
-                    <input type="text" class="form-control" id="filtro-agrupamento-mob" name="agrupamento">
+                    <label for="filtro-agrupamento-mob" class="form-label fs-5">Agrupamento</label>
+                    <input type="text" class="form-control form-control-lg" id="filtro-agrupamento-mob" name="agrupamento">
                 </div>
                 <div class="mb-3">
-                    <label for="filtro-responsavel-mob" class="form-label">Responsável</label>
-                    <input type="text" class="form-control" id="filtro-responsavel-mob" name="responsavel">
+                    <label for="filtro-responsavel-mob" class="form-label fs-5">Responsável</label>
+                    <input type="text" class="form-control form-control-lg" id="filtro-responsavel-mob" name="responsavel">
                 </div>
                 <div class="mb-3">
-                    <label for="filtro-data-mob" class="form-label">Data</label>
-                    <input type="text" class="form-control flatpickr-input" id="filtro-data-mob" name="data" placeholder="Selecione a data">
+                    <label for="filtro-data-mob" class="form-label fs-5">Data</label>
+                    <input type="text" class="form-control form-control-lg flatpickr-input" id="filtro-data-mob" name="data" placeholder="Selecione a data">
                 </div>
-                <button type="button" class="btn btn-primary w-100 btn-aplicar-filtro">Aplicar Filtros</button>
+                <button type="button" class="btn btn-primary w-100 btn-lg btn-aplicar-filtro">Aplicar Filtros</button>
             </form>
         </div>
     </div>
