@@ -22,6 +22,10 @@ jobs:
           echo "    CSV_REFERENCE_URL: 'dados_transacoes_entrada_manual - referencia_servicos.csv'" >> config.js
           echo "};" >> config.js
 
+      # Passo NOVO: Remove o config.js do .gitignore para permitir que ele seja publicado
+      - name: Permitir upload do config.js
+        run: sed -i '/config.js/d' .gitignore || true
+
       - name: Deploy para GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
