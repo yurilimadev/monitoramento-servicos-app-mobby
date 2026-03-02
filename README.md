@@ -1,5 +1,7 @@
 # Monitoramento - APP Mobby - Regras de Negócio
 
+![Banner ou Logo do Projeto](gemini-banner-git.png)
+
 Este documento descreve as regras de negócio e o funcionamento do aplicativo interno de Monitoramento - APP Mobby.
 
 ## Visão Geral
