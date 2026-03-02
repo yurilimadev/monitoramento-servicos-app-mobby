@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterButton = document.getElementById('btn-filtrar');
 
     // Seção de Cabeçalho do Conteúdo
-    const responsavelInput = document.querySelector('input[name="responsavel"]');
+    const responsavelInput = document.getElementById('filtro-responsavel');
     const dataAtualizacaoInput = document.querySelector('input[name="data-atualizacao"]');
 
     // Seção de Display
@@ -42,10 +42,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Filtra linhas vazias e armazena os dados
             referenceData = results.data.filter(item => item.secretaria && item.secretaria.trim() !== '');
             populateSecretarias(referenceData);
+            populateResponsaveis(referenceData);
         },
         error: function(err) {
             console.error("Erro ao carregar o arquivo CSV de referência:", err);
             secretariaSelect.innerHTML = '<option disabled selected>Erro ao carregar</option>';
+            responsavelInput.innerHTML = '<option disabled selected>Erro ao carregar</option>';
         }
     });
 
@@ -66,6 +68,23 @@ document.addEventListener('DOMContentLoaded', function() {
             option.value = sec;
             option.textContent = sec;
             secretariaSelect.appendChild(option);
+        });
+    }
+
+    function populateResponsaveis(data) {
+        // Assumindo que o CSV de referência contém uma coluna 'responsavel'
+        const responsaveis = [...new Set(
+            data
+                .map(item => item.responsavel)
+                .filter(resp => resp && resp.trim() !== '') // Filtra valores nulos ou vazios
+        )].sort();
+
+        responsavelInput.innerHTML = '<option value="" selected disabled>Selecione...</option>';
+        responsaveis.forEach(resp => {
+            const option = document.createElement('option');
+            option.value = resp;
+            option.textContent = resp;
+            responsavelInput.appendChild(option);
         });
     }
 

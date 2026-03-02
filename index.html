@@ -14,6 +14,10 @@
     <header class="shadow-lg">
         <div class="container">
             <h1 class="text-center py-3 text-white">Monitoramento - APP Mobby</h1>
+            <div class="d-flex justify-content-center gap-3 pb-3">
+                <a href="index.html" class="btn btn-light fw-bold">Atualizar Dados</a>
+                <a href="visao-geral-dados.html" class="btn btn-outline-light">Visão Geral</a>
+            </div>
         </div>
     </header>
     <main class="container-fluid ">
@@ -46,8 +50,10 @@
                     <div class="row g-3 mb-4">
 
                         <div class="col-md-6">
-                            <label for="responsavel" class="form-label fw-bold">Responsável</label>
-                            <input class="form-control shadow" type="text" name="responsavel" required>
+                            <label for="filtro-responsavel" class="form-label fw-bold">Responsável</label>
+                            <select class="form-select shadow" id="filtro-responsavel" name="responsavel" required>
+                                <option value="" selected disabled>Carregando...</option>
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label for="data-atualizacao" class="form-label fw-bold">Data Atualização</label>
