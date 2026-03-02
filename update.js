@@ -250,9 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log('Sucesso:', data);
                 alert('Dados salvos com sucesso!');
-                // Opcional: Limpar formulário após o sucesso
-                updateButton.disabled = false;
-                updateButton.innerText = "Atualizar";
+                window.location.reload();
             })
             .catch(error => {
                 console.error('Erro:', error);
