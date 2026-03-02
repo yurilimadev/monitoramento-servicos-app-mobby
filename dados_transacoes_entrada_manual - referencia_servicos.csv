@@ -1,0 +1,175 @@
+secretaria,nome_agrupamento,serviço,subcategoria,responsavel
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Diversos,Viabilidade Técnica,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Diversos,Outros serviços,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Diversos,Denúncia,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Diversos,Vistoria de instalações hidráulicas prediais,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços de Hidrômetros,Instalação de hidrômetro no ramal,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços de Hidrômetros,Outros serviços de hidrômetro,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços de Hidrômetros,Aferição de hidrômetro,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Água,Vazamento de água,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Água,Falta de água,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Água,Qualidade da água,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Água,Outros serviços de água,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Esgoto,Desobstrução de rede de esgoto,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Esgoto,Corte do ramal do esgoto,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Esgoto,Conserto de caixa de inspeção,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Esgoto,Outros de serviços de esgoto,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Esgoto,Reposição / Manutenção de Tampa / Tampão poço de visita,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Comerciais,Revisão de contas,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Comerciais,Alteração Cadastral,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Comerciais,Negociação de débito,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Comerciais,Outros serviços,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Operacionais,Reposição de pavimentação,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Operacionais,Remoção de entulhos de obras da CAERN,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Operacionais,Restauração de calçada,Arthur
+ARSBAN,Ouvidoria em Saneamento Básico,Serviços Operacionais,Outros serviços operacionais,Arthur
+PROCON,PROCON,Mercado de Combustíveis,Denúncias,Arthur
+PROCON,PROCON,Denúncias - PROCON,Denúncias,Arthur
+PROCON,PROCON,Outros Serviços,Outros Serviços,Arthur
+PROCON,PROCON,Energia,Suspensão indevida,Arthur
+PROCON,PROCON,Energia,Cobranças indevidas,Arthur
+PROCON,PROCON,Energia,Duplicidade de cobranças,Arthur
+PROCON,PROCON,Energia,Outros serviços,Arthur
+PROCON,PROCON,Energia,Negocição de débito,Arthur
+PROCON,PROCON,Banco,Itaú,Arthur
+PROCON,PROCON,Banco,Santander,Arthur
+PROCON,PROCON,Banco,Financeiras,Arthur
+PROCON,PROCON,Banco,Caixa econômica,Arthur
+PROCON,PROCON,Banco,Banco do Brasil,Arthur
+PROCON,PROCON,Banco,Bradesco,Arthur
+PROCON,PROCON,Banco,Outros,Arthur
+PROCON,PROCON,Água,Cobranças indevidas,Arthur
+PROCON,PROCON,Água,Negociação de débito,Arthur
+PROCON,PROCON,Água,Outros serviços,Arthur
+PROCON,PROCON,Água,Suspensão indevida,Arthur
+PROCON,PROCON,Água,Duplicidade de cobranças,Arthur
+PROCON,PROCON,Cartão de Crédito,Estornos,Arthur
+PROCON,PROCON,Cartão de Crédito,Outros serviços,Arthur
+PROCON,PROCON,Cartão de Crédito,Cobranças indevidas,Arthur
+PROCON,PROCON,Cartão de Crédito,Negociação de débito,Arthur
+PROCON,PROCON,Cartão de Crédito,Duplicidade de cobranças,Arthur
+PROCON,PROCON,Compras,Loja online,Arthur
+PROCON,PROCON,Compras,Outros serviços,Arthur
+PROCON,PROCON,Compras,Loja física,Arthur
+PROCON,PROCON,Compras,Produtos defeituosos,Arthur
+PROCON,PROCON,Compras,Produtos quebrados,Arthur
+PROCON,PROCON,Educação,Mensalidade Indevida,Arthur
+PROCON,PROCON,Educação,Cancelamento,Arthur
+PROCON,PROCON,Educação,Falsa oferta,Arthur
+PROCON,PROCON,Educação,Outros serviços,Arthur
+PROCON,PROCON,Fale Conosco,Dúvidas e informações,Arthur
+PROCON,PROCON,Telefonia,Cobranças indevidas,Arthur
+PROCON,PROCON,Telefonia,Outros Serviços,Arthur
+PROCON,PROCON,Telefonia,Dificuldade em cancelamento,Arthur
+PROCON,PROCON,Telefonia,Planos,Arthur
+PROCON,PROCON,Telefonia,Falsa oferta,Arthur
+SEHARPE,Habitação,Fale Conosco,Regularização Fundiária,Nemi
+SEHARPE,Habitação,Fale Conosco,Habitação Social,Nemi
+SEINFRA,Obras Públicas,Manutenção de Lagoa de Captação,Escavamento de Lagoa,Yuri
+SEINFRA,Obras Públicas,Manutenção de Lagoa de Captação,Drenagem,Yuri
+SEINFRA,Obras Públicas,Manutenção de Lagoa de Captação,Limpeza,Yuri
+SEINFRA,Obras Públicas,Manutenção de Lagoa de Captação,Retirada de Vegetação,Yuri
+SEINFRA,Obras Públicas,Manutenção de Lagoa de Captação,Transbordamento,Yuri
+SEINFRA,Obras Públicas,Reparo de Via Pública,Afundamento de via pública,Yuri
+SEINFRA,Obras Públicas,Reparo de Via Pública,Galeria Obstruída,Yuri
+SEINFRA,Obras Públicas,Reparo de Via Pública,Substituição de Tampas e Grelhas,Yuri
+SEINFRA,Obras Públicas,Reparo de Via Pública,Tapa Buraco Via Não Pavimentada,Yuri
+SEINFRA,Obras Públicas,Reparo de Via Pública,Tapa Buraco Paralelo,Yuri
+SEL,Esporte e Lazer,Cadastramento de Instituições e Projetos,Cadastro de Instituições e Organizações,Nemi
+SEL,Esporte e Lazer,Cadastramento de Instituições e Projetos,Cadastro de Ações de Pessoas Físicas,Nemi
+SEL,Esporte e Lazer,Cadastro de Atletas e paraltetas,Todas,Nemi
+SEMDES,Defesa Civil,Ocorrências,Situação de Risco,Yuri
+SEMDES,Defesa Civil,Ocorrências,Alagamento,Yuri
+SEMDES,Defesa Civil,Ocorrências,Deslizamento,Yuri
+SEMDES,Defesa Civil,Ocorrências,Outros,Yuri
+SEMIDH,Direitos Humanos,CIPTEA,Emissão de Carteira,Yuri
+SEMIDH,Direitos Humanos,CIPTEA,Solicitar a Impressão,Yuri
+SEMSUR,Serviços Urbanos,Poda de Árvore,Interfere na fachada do imóvel,Yuri
+SEMSUR,Serviços Urbanos,Poda de Árvore,Risco a população,Yuri
+SEMSUR,Serviços Urbanos,Poda de Árvore,Dificulta a passagem de veículos altos,Yuri
+SEMSUR,Serviços Urbanos,Poda de Árvore,Interfere na Iluminação Pública,Yuri
+SEMSUR,Serviços Urbanos,Poda de Árvore,Obstrui Semáforos,Yuri
+SEMSUR,Serviços Urbanos,Ouvidoria da SEMSUR,Reclamação,Yuri
+SEMSUR,Serviços Urbanos,Ouvidoria da SEMSUR,Sugestão,Yuri
+SEMSUR,Serviços Urbanos,Ouvidoria da SEMSUR,Elogio,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Aceso durante o dia,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Nova iluminação,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Iluminação intermitente,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Lampada apagada,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Poste Derrubado,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Manutenção de Praça,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Manutenção de Campo de Futebol,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Manutenção de Quadra,Yuri
+SEMSUR,Serviços Urbanos,Iluminação Pública,Apagão,Yuri
+SEMSUR,Serviços Urbanos,Cemitérios,Info - Sepultamento,Yuri
+SEMSUR,Serviços Urbanos,Cemitérios,Info - Guia de Certidão de Óbito,Yuri
+SEMSUR,Serviços Urbanos,Cemitérios,Alvará de Construção Jazigo,Yuri
+SEMSUR,Serviços Urbanos,Cemitérios,Carta de aforamento - 2° via,Yuri
+SEMSUR,Serviços Urbanos,Cemitérios,Carta Aforamento - Transferência,Yuri
+SEMSUR,Serviços Urbanos,Cemitérios,Carta de Aforamento - 1° via,Yuri
+SEMSUR,Serviços Urbanos,Uso do Espaço Público,Denúncias e Reclamações,Yuri
+SEMSUR,Serviços Urbanos,Uso do Espaço Público,Fale conosco,Yuri
+SEMSUR,Serviços Urbanos,Uso do Espaço Público,Autorização de uso de espaço público,Yuri
+SEMTAS,Trabalho e Assistência Social,Cursos de qualificação profissional,centro municipal de trabalho e emprego - unidade norte,Yuri
+SEMTAS,Trabalho e Assistência Social,Cursos de qualificação profissional,centro municipal de trabalho e emprego - unidade ribeira,Yuri
+SEMTAS,Trabalho e Assistência Social,Emissão Carteira M. do Artesão,Emissão de Carteira,Yuri
+SEMUL,Políticas para as Mulheres,Acolhe Mulher,Dúvidas/Orientações sobre Violência contra a mulher,Nemi
+SEMUL,Políticas para as Mulheres,Acolhe Mulher,Horário de atendimento e endereço,Nemi
+SEMUL,Políticas para as Mulheres,Acolhe Mulher,Cursos de Qualificação Profissional para mulheres,Nemi
+SME,Educação,Seleção de Professores,Veja a documentação necessária,Nemi
+SME,Educação,Seleção de Professores,Perguntas Frequentes,Nemi
+SME,Educação,Seleção de Professores,Agende seu atendimento,Nemi
+SME,Educação,Seleção de Professores,Fale conosco,Nemi
+SME,Educação,Fale Conosco,Dúvidas e informações de convocação,Nemi
+SME,Educação,Carteira Funcional do Professor,Solicitação,Nemi
+SME,Educação,Carteira Funcional do Professor,Fale conosco,Nemi
+SMS,Cuidados com os Animais,Vacinação Antirrábica,Dúvidas e informações,Nemi
+SMS,Cuidados com os Animais,Vacinação Antirrábica,Vacinação,Nemi
+SMS,Cuidados com os Animais,Vigilância da Esporotricose,Recolher Animal Positivo,Nemi
+SMS,Cuidados com os Animais,Vigilância da Esporotricose,Solicitar Exame,Nemi
+SMS,Cuidados com os Animais,Vigilância da Leishmaniose,Solicitar Exame,Nemi
+SMS,Cuidados com os Animais,Vigilância da Leishmaniose,Recolher Animal Positivo,Nemi
+SMS,Cuidados com os Animais,Animal Morto,Timbú,Nemi
+SMS,Cuidados com os Animais,Animal Morto,Outros,Nemi
+SMS,Cuidados com os Animais,Animal Morto,Gato,Nemi
+SMS,Cuidados com os Animais,Animal Morto,Morcego,Nemi
+SMS,Cuidados com os Animais,Animal Morto,Raposa,Nemi
+SMS,Cuidados com os Animais,Animal Morto,Macaco,Nemi
+SMS,Cuidados com os Animais,Animal Morto,Cão,Nemi
+SMS,Cuidados com os Animais,Animal Agressor,Cão,Nemi
+SMS,Cuidados com os Animais,Animal Agressor,Morcego,Nemi
+SMS,Cuidados com os Animais,Animal Agressor,Raposa,Nemi
+SMS,Cuidados com os Animais,Animal Agressor,Macaco,Nemi
+SMS,Cuidados com os Animais,Animal Agressor,Outros,Nemi
+SMS,Cuidados com os Animais,Animal Agressor,Gato,Nemi
+SMS,Cuidados com os Animais,Animal Agressor,Timbú,Nemi
+SMS,Cuidados com os Animais,Arboviroses,Terreno Baldio,Nemi
+SMS,Cuidados com os Animais,Arboviroses,Espaço Público,Nemi
+SMS,Cuidados com os Animais,Arboviroses,Espaço Privado,Nemi
+SMS,Cuidados com os Animais,Arboviroses,Casa Abandonada,Nemi
+SMS,Cuidados com os Animais,Arboviroses,Outros,Nemi
+SMS,Setor de protocolo - COVISA,Emissão de Boleto,Emissão ,Nemi
+SMS,Setor de protocolo - COVISA,Dúvidas Frequentes,Todas,Nemi
+SMS,Setor de protocolo - COVISA,Fale Conosco,Dúvidas e Informações,Nemi
+SMS,Vigilância Sanitária,Denúncia - VISA,Alimentos,Nemi
+SMS,Vigilância Sanitária,Denúncia - VISA,Medicamentos e Produtos,Nemi
+SMS,Vigilância Sanitária,Denúncia - VISA,Saúde do trabalhador,Nemi
+SMS,Vigilância Sanitária,Denúncia - VISA,Meio ambiente,Nemi
+SMS,Vigilância Sanitária,Denúncia - VISA,Serviço de saúde,Nemi
+STTU,Serviços para o Trânsito,Fale Conosco,Elogio,Nemi
+STTU,Serviços para o Trânsito,Fale Conosco,Reclamação,Nemi
+STTU,Serviços para o Trânsito,Fale Conosco,Sugestão,Nemi
+STTU,Serviços para o Trânsito,Fale Conosco,Dúvida,Nemi
+STTU,Serviços para o Trânsito,Manutenção de Via Pública,Repor Sinalização de Trânsito,Nemi
+STTU,Serviços para o Trânsito,Manutenção de Via Pública,Solicitar Manutenção de Semáforo,Nemi
+STTU,Serviços para o Trânsito,Manutenção de Via Pública,Solicitar a Verificação de tempo de Semáforo,Nemi
+STTU,Serviços para o Trânsito,Manutenção de Via Pública,Pinturas de Faixa de Pedestre,Nemi
+STTU,Serviços para o Trânsito,Manutenção de Via Pública,Pintura de lombadas,Nemi
+STTU,Serviços para o Trânsito,Denúncias para Transporte Público,Ônibus,Nemi
+STTU,Serviços para o Trânsito,Denúncias para Transporte Público,Opcional,Nemi
+STTU,Serviços para o Trânsito,Denúncias para Transporte Público,Táxi,Nemi
+STTU,Serviços para o Trânsito,Canal 156,Teste,Nemi
+STTU,Serviços para o Trânsito,Cartão de Estacionamento,Gravidez de risco,Nemi
+STTU,Serviços para o Trânsito,Cartão de Estacionamento,Pessoa com Deficiência,Nemi
+STTU,Serviços para o Trânsito,Cartão de Estacionamento,Pessoa Idosa,Nemi
+FUNCARTE/SECULT,Cultura e Arte,Todas,Sem subcategoria,Arthur

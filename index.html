@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Monitoramento - APP</title>
+</head>
+<body class="nunito">
+
+    <header class="shadow-lg">
+        <div class="container">
+            <h1 class="text-center py-3 text-white">Monitoramento - APP Mobby</h1>
+        </div>
+    </header>
+    <main class="container-fluid ">
+        <section class="container my-4">
+
+            <div class="row g-4"> 
+                <div class="d-grid gap-4 col-md-3 h-740">
+                    <div class="d-grid order-2 order-md-1">
+
+                        <div>
+                            <h5 class="mb-3">Filtros</h5>
+                            <div class="d-grid gap-3">
+                                <label for="filtro-secretaria" class="form-label fw-bold">Secretaria</label>
+                                <select class="form-select shadow" id="filtro-secretaria" name="secretaria"><option selected disabled>Carregando...</option></select>
+                                <label for="filtro-agrupamento" class="form-label fw-bold">Agrupamento</label>
+                                <select class="form-select shadow" id="filtro-agrupamento" name="agrupamento" disabled><option selected disabled>Selecione uma secretaria</option></select>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button class="btn btn-primary" id="btn-filtrar" type="button">Filtrar</button>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="text-center order-1 order-md-2">
+                        <img class="img-fluid" src="logo-pmn.png" alt="">
+                    </div>
+                </div>
+                <form class="col-md-9 h-100 overflow-hidden" id="form-update">
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-md-6">
+                            <label for="responsavel" class="form-label fw-bold">Responsável</label>
+                            <input class="form-control shadow" type="text" name="responsavel" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data-atualizacao" class="form-label fw-bold">Data Atualização</label>
+                            <input class="form-control shadow" type="text" name="data-atualizacao" placeholder="Selecione a data" required>
+                        </div>
+                        
+                    </div>
+                    <div class="p-4 border shadow overflow-hidden">
+                        <div class="text-center">
+                            <h5 id="display-secretaria">[SECRETARIA]</h5>
+                            <p id="display-agrupamento">[Agrupamento]</p>
+                        </div>
+                        
+                        <div id="dynamic-content-wrapper" class="d-grid gap-4 mt-4 overflow-hidden w-100">
+                            <p class="text-center text-muted">Selecione os filtros e clique em "Filtrar" para carregar os serviços.</p>
+                        </div>
+                        <hr>
+                            <!-- Botão de Envio (Opcional) -->
+                            <div class="row mt-4">
+                                <div class="col-12 d-md-flex justify-content-md-end">
+                                    <button type="submit" class="btn btn-primary ">Atualizar</button>
+                                </div>
+                            </div>
+                        </div>
+                </form>
+            </div>
+            
+        </section>
+    </main>
+    <footer class="container-fluid text-center py-3">
+        Desenvolvido por Yuri Dimitri - SEMPLA - 2026
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
+    <script src="config.js"></script>
+    <script src="update.js"></script>
+</body>
+</html>
