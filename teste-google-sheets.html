@@ -97,7 +97,7 @@
     </div>
 
     <div class="container">
-        <h2 class="mb-4">📊 Dados da Planilha</h2>
+        <h2 class="mb-4">📊 Dados Transacionais de Monitoramento - APP Mobby</h2>
         
         <!-- Botão Toggle Mobile (Visível apenas em telas menores que LG) -->
         <button class="btn btn-primary d-lg-none mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltros">
@@ -190,10 +190,12 @@
                 const form = event.target.closest('form');
                 const formData = new FormData(form);
                 const filtros = {};
-                
+
                 formData.forEach((value, key) => {
                     filtros[key] = value;
                 });
+
+                console.log("Filtros Capturados:", filtros);
 
                 // --- Lógica de Filtragem ---
                 dadosFiltrados = todosOsDados.filter(linha => {
@@ -205,15 +207,23 @@
                         const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
                         // Encontra a coluna correspondente no CSV (ex: input 'secretaria' busca coluna 'Secretaria')
-                        const colunaCorrespondente = Object.keys(linha).find(colunaNome => 
+                        let colunaCorrespondente = Object.keys(linha).find(colunaNome => 
                             normalizar(colunaNome).includes(normalizar(filtroKey))
                         );
+
+                        // CORREÇÃO: Se o filtro for 'data' e não achou coluna, tenta procurar por 'dia'
+                        // Isso resolve o caso onde o input é 'data' mas a coluna é 'Dia da Atualização'
+                        if (!colunaCorrespondente && filtroKey === 'data') {
+                            colunaCorrespondente = Object.keys(linha).find(colunaNome => 
+                                normalizar(colunaNome).includes('dia')
+                            );
+                        }
 
                         if (colunaCorrespondente) {
                             const valorCelula = String(linha[colunaCorrespondente]).toLowerCase().trim();
                             
                             // Lógica Avançada para Data (Compara números para evitar erros de formato)
-                            if (filtroKey.includes('data') && valorFiltro.includes('/')) {
+                            if ((filtroKey.includes('data') || filtroKey.includes('dia')) && valorFiltro.includes('/')) {
                                 // Filtro vem do Flatpickr como DD/MM/AAAA
                                 const [fDia, fMes, fAno] = valorFiltro.split('/');
                                 
@@ -225,17 +235,15 @@
                                     [cAno, cMes, cDia] = dataLimpa.split('-'); // Formato ISO: AAAA-MM-DD
                                 } else if (dataLimpa.includes('/')) {
                                     const partes = dataLimpa.split('/');
-                                    // Google Sheets pode exportar como M/D/AAAA (ano com 4 dígitos na posição [2])
-                                    // Esta verificação diferencia o formato americano do brasileiro.
-                                    if (partes[2] && partes[2].length === 4) {
-                                        [cMes, cDia, cAno] = partes; // Formato americano: M/D/AAAA
-                                    } else {
-                                        [cDia, cMes, cAno] = partes; // Formato brasileiro: DD/MM/AAAA
-                                    }
+                                    // Correção: Assume formato brasileiro DD/MM/AAAA (padrão PT-BR)
+                                    // A lógica anterior invertia dia/mês se o ano tivesse 4 dígitos
+                                    [cDia, cMes, cAno] = partes;
                                 }
 
                                 // Compara os valores numéricos (resolve problemas de 02 vs 2)
                                 if (cDia && cMes && cAno) {
+                                    // Debug: Mostra o que está sendo comparado se houver falha
+                                    console.log(`Comparando [${colunaCorrespondente}]: Planilha ${cDia}/${cMes}/${cAno} vs Filtro ${fDia}/${fMes}/${fAno}`);
                                     return parseInt(cDia) === parseInt(fDia) &&
                                            parseInt(cMes) === parseInt(fMes) &&
                                            parseInt(cAno) === parseInt(fAno);
