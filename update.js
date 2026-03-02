@@ -1,5 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Configurações carregadas do config.js
+    
+    // Verificação de Segurança: Se o config.js falhar, para tudo e avisa.
+    if (typeof AppConfig === 'undefined') {
+        console.error("ERRO CRÍTICO: O arquivo config.js não foi carregado. Verifique se a Secret SHEETDB_API_URL está configurada no GitHub e se o deploy incluiu o arquivo.");
+        alert("Erro de configuração: Não foi possível carregar as chaves de acesso. Consulte o console.");
+        return;
+    }
+
     const API_URL = AppConfig.API_URL;
     const CSV_REFERENCE_URL = AppConfig.CSV_REFERENCE_URL;
     let referenceData = [];
