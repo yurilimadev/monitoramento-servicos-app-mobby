@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // URL da API do SheetDB
-    const API_URL = 'https://sheetdb.io/api/v1/9mw17piwu9w9w';
-    const CSV_REFERENCE_URL = 'dados_transacoes_entrada_manual - referencia_servicos.csv';
+    // Configurações carregadas do config.js
+    const API_URL = AppConfig.API_URL;
+    const CSV_REFERENCE_URL = AppConfig.CSV_REFERENCE_URL;
     let referenceData = [];
 
     // --- Seletores de Elementos ---

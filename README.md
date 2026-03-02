@@ -77,3 +77,20 @@ Esta seção destina-se à equipe de TI para manutenção e evolução do sistem
 *   `visao-geral-dados.html`: Dashboard para visualização, filtragem e paginação dos dados já registrados.
 *   `update.js`: Contém a lógica de carregamento dinâmico do formulário, validação de inputs e comunicação com a API SheetDB.
 *   `style.css`: Estilizações personalizadas e overrides do Bootstrap.
+
+### Configuração do Ambiente (Importante)
+
+Para que o sistema funcione localmente ou em produção, é necessário criar um arquivo de configuração manual, pois as chaves de API não são versionadas no Git.
+
+1.  Crie um arquivo chamado `config.js` na raiz do projeto.
+2.  Cole o seguinte código e substitua a URL pela sua API do SheetDB:
+
+```javascript
+const AppConfig = {
+    // URL da API do SheetDB (Substitua pela sua chave real)
+    API_URL: 'https://sheetdb.io/api/v1/SUA_CHAVE_AQUI',
+    
+    // Nome do arquivo CSV de referência (Geralmente não precisa alterar)
+    CSV_REFERENCE_URL: 'dados_transacoes_entrada_manual - referencia_servicos.csv'
+};
+```

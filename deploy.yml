@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Ou 'master', dependendo da sua branch principal
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Criar config.js com Segredos
+        run: |
+          echo "const AppConfig = {" > config.js
+          echo "    API_URL: '${{ secrets.SHEETDB_API_URL }}'," >> config.js
+          echo "    CSV_REFERENCE_URL: 'dados_transacoes_entrada_manual - referencia_servicos.csv'" >> config.js
+          echo "};" >> config.js
+
+      - name: Deploy para GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: . 
+          branch: gh-pages # A branch que o GitHub Pages vai usar
+          clean: true
+          # Importante: Isso garante que o config.js criado acima seja incluído no deploy
+          force: true 
