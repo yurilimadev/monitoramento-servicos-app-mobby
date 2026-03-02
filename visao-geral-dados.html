@@ -282,7 +282,8 @@
             const dadosDaPagina = dadosFiltrados.slice(inicio, fim);
 
             // Usa os cabeçalhos originais para manter a estrutura
-            const colunas = Object.keys(todosOsDados[0] || {});
+            // Filtra 'subcategoria' para não exibir na tabela
+            const colunas = Object.keys(todosOsDados[0] || {}).filter(c => c.toLowerCase() !== 'subcategoria');
             let htmlBody = '';
             dadosDaPagina.forEach(linha => {
                 htmlBody += '<tr>';
@@ -328,7 +329,8 @@
 
                 if (todosOsDados.length > 0) {
                     // Cria o cabeçalho da tabela dinamicamente
-                    const colunas = Object.keys(todosOsDados[0]);
+                    // Filtra 'subcategoria' para não exibir no cabeçalho
+                    const colunas = Object.keys(todosOsDados[0]).filter(c => c.toLowerCase() !== 'subcategoria');
                     let htmlHead = '<tr>';
                     colunas.forEach(col => htmlHead += `<th>${col}</th>`);
                     htmlHead += '</tr>';

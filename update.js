@@ -101,16 +101,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="p-3 border rounded shadow-sm service-entry overflow-hidden">
                     <!-- Dados ocultos para referência no envio -->
                     <input type="hidden" class="service-name" value="${service.serviço}">
-                    <input type="hidden" class="service-subcategory" value="${service.subcategoria}">
 
                     <div class="row g-2">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12">
                             <label class="form-label fw-bold small">Serviço</label>
                             <p class="form-control-plaintext bg-light p-2 rounded text-truncate">${service.serviço}</p>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label fw-bold small">Subcategoria</label>
-                            <p class="form-control-plaintext bg-light p-2 rounded text-truncate">${service.subcategoria}</p>
                         </div>
                     </div>
                     <div class="row g-2 mt-1">
@@ -176,9 +171,20 @@ document.addEventListener('DOMContentLoaded', function() {
             displayAgrupamento.textContent = selectedAgrupamento;
 
             // Filtra os dados para encontrar os serviços correspondentes
-            const servicesToRender = referenceData.filter(item =>
+            const rawServices = referenceData.filter(item =>
                 item.secretaria === selectedSecretaria && item.nome_agrupamento === selectedAgrupamento
             );
+
+            // Remove duplicatas de serviços (caso existam múltiplas subcategorias para o mesmo serviço)
+            const servicesToRender = [];
+            const seenServices = new Set();
+
+            rawServices.forEach(item => {
+                if (!seenServices.has(item.serviço)) {
+                    seenServices.add(item.serviço);
+                    servicesToRender.push(item);
+                }
+            });
 
             // Renderiza o formulário dinâmico
             renderDynamicForm(servicesToRender);
@@ -221,7 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     "secretaria": displaySecretaria.textContent,
                     "nome_agrupamento": displayAgrupamento.textContent,
                     "serviço": entry.querySelector('.service-name').value,
-                    "subcategoria": entry.querySelector('.service-subcategory').value,
                     "aberto": entry.querySelector('.data-input-aberto').value || '0',
                     "em andamento": entry.querySelector('.data-input-andamento').value || '0',
                     "encerrado": entry.querySelector('.data-input-encerrado').value || '0',
