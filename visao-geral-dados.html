@@ -83,15 +83,21 @@
             <form id="form-filtros-mobile">
                 <div class="mb-3">
                     <label for="filtro-secretaria-mob" class="form-label fs-5">Secretaria</label>
-                    <input type="text" class="form-control form-control-lg" id="filtro-secretaria-mob" name="secretaria" placeholder="Ex: SAUDE">
+                    <select class="form-select form-select-lg" id="filtro-secretaria-mob" name="secretaria">
+                        <option value="">Todos</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="filtro-agrupamento-mob" class="form-label fs-5">Agrupamento</label>
-                    <input type="text" class="form-control form-control-lg" id="filtro-agrupamento-mob" name="agrupamento">
+                    <select class="form-select form-select-lg" id="filtro-agrupamento-mob" name="agrupamento">
+                        <option value="">Todos</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="filtro-responsavel-mob" class="form-label fs-5">Responsável</label>
-                    <input type="text" class="form-control form-control-lg" id="filtro-responsavel-mob" name="responsavel">
+                    <select class="form-select form-select-lg" id="filtro-responsavel-mob" name="responsavel">
+                        <option value="">Todos</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="filtro-data-mob" class="form-label fs-5">Data</label>
@@ -120,15 +126,21 @@
             <form id="form-filtros-desktop" class="row g-3">
                 <div class="col-md-3">
                     <label for="filtro-secretaria" class="form-label">Secretaria</label>
-                    <input type="text" class="form-control" id="filtro-secretaria" name="secretaria" placeholder="Ex: SAUDE">
+                    <select class="form-select" id="filtro-secretaria" name="secretaria">
+                        <option value="">Todos</option>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label for="filtro-agrupamento" class="form-label">Agrupamento</label>
-                    <input type="text" class="form-control" id="filtro-agrupamento" name="agrupamento">
+                    <select class="form-select" id="filtro-agrupamento" name="agrupamento">
+                        <option value="">Todos</option>
+                    </select>
                 </div>
                 <div class="col-md-2">
                     <label for="filtro-responsavel" class="form-label">Responsável</label>
-                    <input type="text" class="form-control" id="filtro-responsavel" name="responsavel">
+                    <select class="form-select" id="filtro-responsavel" name="responsavel">
+                        <option value="">Todos</option>
+                    </select>
                 </div>
                 <div class="col-md-2">
                     <label for="filtro-data" class="form-label">Data</label>
@@ -173,7 +185,8 @@
 
     <script>
         // --- Configurações ---
-        const URL_PLANILHA = 'https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/gviz/tq?tqx=out:csv&gid=0'
+        // Adiciona um parâmetro de timestamp para evitar o cache do Google Sheets e garantir dados frescos.
+        const URL_PLANILHA = `https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/export?format=csv&gid=0&t=${new Date().getTime()}`;
         const LINHAS_POR_PAGINA = 10;
 
         // --- Variáveis de Estado ---
@@ -192,6 +205,32 @@
             locale: "pt",
             dateFormat: "d/m/Y"
         });
+
+        // --- Preenchimento Dinâmico dos Selects ---
+        function preencherOpcoesSelect(seletorIds, palavraChave, dados) {
+            const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            
+            // Busca a coluna correta baseada na palavra chave
+            const colKey = Object.keys(dados[0] || {}).find(c => normalizar(c).includes(normalizar(palavraChave)));
+            
+            if (!colKey) return; // Retorna se não encontrar a coluna
+
+            // Extrai valores únicos, remove vazios e ordena alfabeticamente
+            const valoresUnicos = [...new Set(dados.map(item => item[colKey]).filter(val => val && val.trim() !== ''))].sort();
+
+            seletorIds.forEach(id => {
+                const select = document.querySelector(id);
+                if (select) {
+                    select.innerHTML = '<option value="">Todos</option>'; // Limpa e adiciona o padrão
+                    valoresUnicos.forEach(val => {
+                        const option = document.createElement('option');
+                        option.value = val;
+                        option.textContent = val;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
 
         // --- Event Listeners dos Filtros ---
         document.querySelectorAll('.btn-aplicar-filtro').forEach(button => {
@@ -289,7 +328,7 @@
 
             // Usa os cabeçalhos originais para manter a estrutura
             // Filtra 'subcategoria' para não exibir na tabela
-            const colunas = Object.keys(todosOsDados[0] || {}).filter(c => c.toLowerCase() !== 'subcategoria');
+            const colunas = Object.keys(todosOsDados[0] || {}).filter(c => c.toLowerCase() !== 'subcategoria' && !c.toLowerCase().includes('codigo'));
             let htmlBody = '';
             dadosDaPagina.forEach(linha => {
                 htmlBody += '<tr>';
@@ -297,6 +336,12 @@
                 htmlBody += '</tr>';
             });
             tabelaBody.innerHTML = htmlBody;
+
+            // Verificação de Diagnóstico: Se os dados existem mas nada foi renderizado, mostra um erro.
+            if (tabelaBody.innerHTML.trim() === '' && dadosFiltrados.length > 0) {
+                tabelaBody.innerHTML = '<tr><td colspan="100%" class="text-center p-4 bg-warning"><b>Erro de Renderização:</b> Dados foram encontrados, mas não foi possível exibi-los. Verifique o console de desenvolvedor (F12) para mais detalhes.</td></tr>';
+                console.error("Falha na renderização da tabela. 'colunas' pode estar vazio ou os dados da primeira linha são inconsistentes.", { colunas: colunas, primeiraLinha: dadosDaPagina[0] });
+            }
 
             renderizarControlesPaginacao();
         }
@@ -320,36 +365,105 @@
             }
         }
 
-        // --- Lógica Principal ---
+        // --- Lógica Principal (Abordagem Robusta) ---
         Papa.parse(URL_PLANILHA, {
-            download: true,       // Baixa o arquivo
-            header: true,         // Usa a 1ª linha como nome das colunas
+            download: true,
+            header: false, // 1. Desativa o processamento automático de cabeçalho
+            skipEmptyLines: true,
             complete: function(resultados) {
                 statusDiv.style.display = 'none';
+                const rawData = resultados.data;
+                console.log(rawData);
+                if (!rawData || rawData.length < 2) {
+                    tabelaBody.innerHTML = '<tr><td colspan="100%" class="text-center p-4">Não há dados suficientes ou a planilha está vazia.</td></tr>';
+                    return;
+                }
 
-                // Filtra linhas vazias que o PapaParse pode retornar
-                todosOsDados = resultados.data.filter(linha => 
-                    Object.values(linha).some(valor => valor && valor.trim() !== '')
-                );
-                dadosFiltrados = [...todosOsDados]; // Inicializa com todos os dados
+                // 2. Função dedicada para limpar os cabeçalhos "sujos" do Google Sheets
+                function cleanHeader(header) {
+                    if (!header) return 'Coluna_Vazia';
+                    let h = header.trim().split('\n')[0];
 
+                    const matchData = h.match(/\s(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/\d{4}/);
+                    if (matchData && matchData.index > 0) return h.substring(0, matchData.index).trim();
+                    
+                    const words = h.split(/\s+/);
+                    if (words.length > 2 && words[1] === words[2]) return words[0];
+                    
+                    const matchNumeros = h.match(/\s\d+\s\d+/);
+                    if (matchNumeros && matchNumeros.index > 0) return h.substring(0, matchNumeros.index).trim();
+                    
+                    if (h.length > 35) {
+                        const hLower = h.toLowerCase();
+                        const knownHeaders = ['em andamento', 'nome_agrupamento', 'dia_da_atualizacao', 'codigo_unico'];
+                        for (let known of knownHeaders) {
+                            if (hLower.startsWith(known)) return known;
+                        }
+                        const firstWord = words[0];
+                        const singleWordHeaders = ['secretaria', 'serviço', 'responsavel', 'observacao', 'aberto', 'encerrado', 'nome', 'codigo'];
+                        if (singleWordHeaders.some(s => firstWord.toLowerCase().includes(s))) return firstWord;
+                    }
+                    return h;
+                }
+
+                // 3. Processa os cabeçalhos e as linhas de dados manualmente
+                const headersOriginais = rawData[0].map(cleanHeader);
+                const dataRows = rawData.slice(1);
+
+                // Prevenção: Garante que nenhum cabeçalho tenha nome duplicado (o que faria uma coluna apagar a outra)
+                const headers = [];
+                const contagemHeaders = {};
+                headersOriginais.forEach(h => {
+                    let nomeFinal = h;
+                    if (contagemHeaders[h]) {
+                        nomeFinal = `${h}_${contagemHeaders[h]}`;
+                        contagemHeaders[h]++;
+                    } else {
+                        contagemHeaders[h] = 1;
+                    }
+                    headers.push(nomeFinal);
+                });
+
+                todosOsDados = dataRows.map(row => {
+                    const linhaObjeto = {};
+                    headers.forEach((header, index) => {
+                        // Pega o valor exato, protegendo zeros (0) e limpando espaços em branco
+                        let valor = row[index];
+                        linhaObjeto[header] = (valor !== undefined && valor !== null) ? String(valor).trim() : '';
+                    });
+                    return linhaObjeto;
+                }).filter(linha => {
+                    // Uma linha só é mantida se tiver dados reais (ignora a coluna de código na validação)
+                    return Object.entries(linha).some(([chave, valor]) => !chave.toLowerCase().includes('codigo') && valor !== '');
+                });
+                
+                console.log("Total de linhas extraídas com sucesso:", todosOsDados.length);
+                console.log("Amostra do primeiro registro mapeado:", todosOsDados[0]);
+
+                dadosFiltrados = [...todosOsDados];
+
+                // 4. Continua com a renderização normal
                 if (todosOsDados.length > 0) {
-                    // Cria o cabeçalho da tabela dinamicamente
-                    // Filtra 'subcategoria' para não exibir no cabeçalho
-                    const colunas = Object.keys(todosOsDados[0]).filter(c => c.toLowerCase() !== 'subcategoria');
+                    const colunas = headers.filter(c => c.toLowerCase() !== 'subcategoria' && !c.toLowerCase().includes('codigo'));
                     let htmlHead = '<tr>';
                     colunas.forEach(col => htmlHead += `<th>${col}</th>`);
                     htmlHead += '</tr>';
                     tabelaHead.innerHTML = htmlHead;
-                    console.log("Colunas encontradas na aba Transações:", colunas);
+                    console.log("Colunas configuradas manualmente:", colunas);
 
-                    // Renderiza a primeira página
+                    preencherOpcoesSelect(['#filtro-secretaria', '#filtro-secretaria-mob'], 'secretaria', todosOsDados);
+                    preencherOpcoesSelect(['#filtro-agrupamento', '#filtro-agrupamento-mob'], 'agrupamento', todosOsDados);
+                    preencherOpcoesSelect(['#filtro-responsavel', '#filtro-responsavel-mob'], 'responsavel', todosOsDados);
+
                     renderizarPagina(1);
+                } else {
+                    tabelaBody.innerHTML = '<tr><td colspan="100%" class="text-center p-4">Nenhum dado válido encontrado na planilha após o processamento.</td></tr>';
                 }
             },
             error: function(erro) {
+                statusDiv.style.display = 'block';
                 statusDiv.className = 'alert alert-danger';
-                statusDiv.innerText = 'Erro ao carregar: ' + erro.message;
+                statusDiv.innerText = 'Erro ao processar dados CSV: ' + erro.message;
             }
         });
     </script>
