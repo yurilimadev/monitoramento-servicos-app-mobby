@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Verifique se sua branch principal é 'main' ou 'master'
+      - main
 
 permissions:
   contents: write
@@ -15,21 +15,28 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Criar config.js com Segredos
-        run: |
-          echo "const AppConfig = {" > config.js
-          echo "    API_URL: '${{ secrets.SHEETDB_API_URL }}'," >> config.js
-          echo "    CSV_REFERENCE_URL: 'dados_transacoes_entrada_manual - referencia_servicos.csv'" >> config.js
-          echo "};" >> config.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      # Passo NOVO: Remove o config.js do .gitignore para permitir que ele seja publicado
-      - name: Permitir upload do config.js
-        run: sed -i '/config.js/d' .gitignore || true
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Criar .env.production com Segredos
+        run: |
+          echo "VITE_SHEETS_API_KEY=${{ secrets.SHEETS_API_KEY }}" >> .env.production
+          echo "VITE_SPREADSHEET_ID=${{ secrets.SPREADSHEET_ID }}" >> .env.production
+          echo "VITE_SHEETS_RANGE=Página1" >> .env.production
+          echo "VITE_APPS_SCRIPT_URL=${{ secrets.APPS_SCRIPT_URL }}" >> .env.production
+
+      - name: Build do Vue
+        run: npm run build
 
       - name: Deploy para GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: . 
+          folder: dist
           branch: gh-pages
           clean: true
           force: true
