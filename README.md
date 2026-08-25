@@ -86,6 +86,12 @@ VITE_SHEETS_RANGE=nome_da_aba
 VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/SEU_ID/exec
 ```
 
+## Planilha de dados
+
+A planilha Google Sheets utilizada como fonte de dados pode ser acessada internamente em:
+
+[https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/](https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/)
+
 ## Versão
 
 v2.0.0 — Refatoração para Vue 3. Substituído SheetDB por Google Sheets API v4 + Apps Script.
