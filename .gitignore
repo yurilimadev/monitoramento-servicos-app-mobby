@@ -1,4 +1,9 @@
 # Arquivos de Configuração (Contém chaves de API)
 config.js
+.env*
+*.local
+
+node_modules/
+dist/
 
 *.txt
