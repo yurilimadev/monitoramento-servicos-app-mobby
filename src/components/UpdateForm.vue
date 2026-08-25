@@ -121,8 +121,10 @@ export default {
       store.selectedData = ''
     })
 
-    watch(() => store.servicesToRender.length, async (len) => {
-      if (len > 0) {
+    watch(() => store.servicesToRender, async (services) => {
+      serviceData.value = {}
+      openIdx.value = 0
+      if (services.length > 0) {
         await nextTick()
         if (dateInput.value && !flatpickrInstance) {
           flatpickrInstance = flatpickr(dateInput.value, {
@@ -133,7 +135,7 @@ export default {
           })
         }
       }
-    })
+    }, { deep: true })
 
     watch(() => store.selectedData, (val) => {
       if (flatpickrInstance) {
