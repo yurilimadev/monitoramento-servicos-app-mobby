@@ -1,96 +1,91 @@
-# Monitoramento - APP Mobby - Regras de Negócio
+# Monitoramento - APP Mobby
 
-![Banner ou Logo do Projeto](gemini-banner-git.png)
+![Banner](gemini-banner-git.png)
 
-Este documento descreve as regras de negócio e o funcionamento do aplicativo interno de Monitoramento - APP Mobby.
+Aplicativo interno para monitoramento de dados transacionais do APP Mobby, permitindo filtrar, atualizar e visualizar informações de serviços por secretaria e agrupamento.
 
-## Visão Geral
+## Funcionalidades
 
-O aplicativo tem como objetivo monitorar dados transacionais do APP Mobby, permitindo filtrar, atualizar e visualizar informações relevantes.
+- **Atualizar Dados** — Formulário dinâmico com accordion para preencher métricas (Aberto, Andamento, Encerrado, Observação) por serviço, com upsert automático na planilha.
+- **Visão Geral** — Tabela paginada com filtros por Secretaria, Agrupamento, Data e Serviço, alimentada pela Google Sheets API.
 
-## Regras de Negócio
+## Stack
 
-1.  **Filtragem de Dados:**
+| Camada | Tecnologia |
+|---|---|
+| Framework | Vue 3 (Composition API, JS) |
+| Build | Vite |
+| Roteamento | Vue Router (hash history) |
+| Estado | Pinia |
+| Estilo | Bootstrap 5.3 + Bootstrap Icons (via CDN) |
+| Data | Flatpickr (via CDN) |
+| CSV | PapaParse (via CDN) |
 
-    *   Os dados podem ser filtrados por:
-        *   `Secretaria`: Permite selecionar uma secretaria específica.
-        *   `Agrupamento`: Permite selecionar um agrupamento dentro da secretaria.
-        *   `Responsável`: Permite filtrar por um responsável específico.
-        *   `Data`: Permite filtrar por uma data específica.
-    *   A filtragem é realizada tanto na interface desktop quanto mobile.
+## Fluxo de Dados
 
-2.  **Atualização de Dados:**
-
-    *   A atualização de dados é feita através de um formulário dinâmico.
-    *   O formulário é carregado após a seleção de uma secretaria e um agrupamento.
-    *   Os campos a serem preenchidos incluem:
-        *   `Aberto`: Número de serviços abertos.
-        *   `Andamento`: Número de serviços em andamento.
-        *   `Encerrado`: Número de serviços encerrados.
-        *   `Observação`: Observações adicionais sobre o serviço.
-    *   A data de atualização e o responsável são campos obrigatórios no formulário.
-
-## Fluxo de Trabalho
-
-1.  O usuário seleciona a `Secretaria` e o `Agrupamento`.
-2.  O sistema carrega dinamicamente os serviços relacionados.
-3.  O usuário preenche os dados de monitoramento (Aberto, Andamento, Encerrado, Observação).
-4.  O usuário preenche o `Responsável` e a `Data de Atualização`.
-5.  O usuário clica em "Atualizar" para salvar os dados no banco de dados.
-
----
-
-## Documentação Técnica
-
-Esta seção destina-se à equipe de TI para manutenção e evolução do sistema.
-
-### Stack Tecnológico
-
-*   **Frontend:** HTML5, CSS3, JavaScript (Vanilla ES6+).
-*   **Framework CSS:** Bootstrap 5.3 (via CDN).
-*   **Ícones:** Bootstrap Icons (via CDN).
-*   **Fontes:** Google Fonts (Família "Nunito").
-
-### Bibliotecas e Dependências
-
-1.  **PapaParse (v5.3.2):**
-    *   Utilizada para processar (parse) arquivos CSV.
-    *   O sistema consome dados do Google Sheets no formato CSV e utiliza o PapaParse para converter esses dados em objetos JavaScript manipuláveis para a renderização da tabela e dos selects.
-
-2.  **Flatpickr:**
-    *   Utilizada para os campos de seleção de data (`input[name="data"]`).
-    *   Garante que o formato da data seja enviado consistentemente como `DD/MM/AAAA` e fornece localização em PT-BR.
-
-### Integrações e APIs
-
-*   **Google Sheets API (Visualização/Leitura):**
-    *   Utiliza o endpoint `/gviz/tq?tqx=out:csv` do Google Sheets para obter os dados de forma pública e rápida para leitura.
-    *   Localização: `visao-geral-dados.html` e `teste-google-sheets.html`.
-
-*   **SheetDB (Escrita/Gravação):**
-    *   Utiliza a API SheetDB.io para realizar operações de `POST` (inserção de novas linhas) na planilha.
-    *   Localização: `update.js`.
-
-### Estrutura de Arquivos Principais
-
-*   `index.html`: Página principal contendo o formulário de atualização de dados.
-*   `visao-geral-dados.html`: Dashboard para visualização, filtragem e paginação dos dados já registrados.
-*   `update.js`: Contém a lógica de carregamento dinâmico do formulário, validação de inputs e comunicação com a API SheetDB.
-*   `style.css`: Estilizações personalizadas e overrides do Bootstrap.
-
-### Configuração do Ambiente (Importante)
-
-Para que o sistema funcione localmente ou em produção, é necessário criar um arquivo de configuração manual, pois as chaves de API não são versionadas no Git.
-
-1.  Crie um arquivo chamado `config.js` na raiz do projeto.
-2.  Cole o seguinte código e substitua a URL pela sua API do SheetDB:
-
-```javascript
-const AppConfig = {
-    // URL da API do SheetDB (Substitua pela sua chave real)
-    API_URL: 'https://sheetdb.io/api/v1/SUA_CHAVE_AQUI',
-    
-    // Nome do arquivo CSV de referência (Geralmente não precisa alterar)
-    CSV_REFERENCE_URL: 'dados_transacoes_entrada_manual - referencia_servicos.csv'
-};
 ```
+CSV de referência (local) ──PapaParse──→ FilterPanel (popula selects)
+                                                 ↓
+Google Sheets API v4 (GET) ──API Key──→ OverviewPage / "Puxar dados salvos"
+                                                 ↓
+Google Apps Script (POST)  ──upsert──→ Planilha (escrita)
+```
+
+- **Leitura de referência:** CSV local com PapaParse → popula selects de Secretaria, Agrupamento e Responsável.
+- **Leitura da planilha:** Google Sheets API v4 (`GET /v4/spreadsheets/{id}/values/{range}?key={API_KEY}`).
+- **Escrita:** POST para Google Apps Script Web App, que faz upsert na planilha usando `codigo_unico` como chave (SHA-256 gerado via `crypto.subtle.digest`).
+
+## Comandos
+
+```bash
+npm run dev      # Servidor de desenvolvimento (Vite)
+npm run build    # Produz dist/ para deploy
+npm run preview  # Serve dist/ localmente
+```
+
+## Requisitos para Deploy (GitHub Actions)
+
+| Secret do GitHub | Finalidade |
+|---|---|
+| `SHEETS_API_KEY` | Chave da Google Sheets API v4 |
+| `APPS_SCRIPT_URL` | URL do Web App do Google Apps Script |
+| `SPREADSHEET_ID` | ID da planilha Google Sheets |
+
+O deploy é automático via `main` → GitHub Pages (`gh-pages`). Base URL: `/monitoramento-servicos-app-mobby/`.
+
+## Estrutura do Projeto
+
+```
+src/
+  config.js             # Lê import.meta.env.VITE_*
+  services/
+    csvParser.js        # PapaParse + normalizar()
+    sheetApi.js         # Leitura via Google Sheets API v4
+    sheetWriter.js      # Escrita via Apps Script
+  stores/
+    monitorStore.js     # Pinia (estado global)
+  components/
+    AppHeader.vue       # Navegação
+    FilterPanel.vue     # Filtros (Secretaria, Agrupamento, Data, Serviço)
+    ServiceCard.vue     # Formulário de serviço
+    UpdateForm.vue      # Accordion + formulário de atualização
+    DataTable.vue       # Tabela paginada
+  views/
+    UpdatePage.vue      # Rota / (atualização)
+    OverviewPage.vue    # Rota /visao-geral (visualização)
+```
+
+## Configuração local
+
+Crie um arquivo `.env` na raiz (não versionado):
+
+```env
+VITE_SHEETS_API_KEY=SUA_CHAVE
+VITE_SPREADSHEET_ID=ID_DA_PLANILHA
+VITE_SHEETS_RANGE=nome_da_aba
+VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/SEU_ID/exec
+```
+
+## Versão
+
+v2.0.0 — Refatoração para Vue 3. Substituído SheetDB por Google Sheets API v4 + Apps Script.
