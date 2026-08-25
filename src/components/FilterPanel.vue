@@ -14,19 +14,12 @@
         <option v-for="a in store.agrupamentos" :key="a" :value="a">{{ a }}</option>
       </select>
     </div>
-    <div v-if="showResponsavel">
-      <label class="form-label fw-bold">Responsável</label>
-      <select class="form-select shadow" v-model="store.selectedResponsavel" required>
-        <option disabled value="">Selecione...</option>
-        <option v-for="r in store.responsaveis" :key="r" :value="r">{{ r }}</option>
-      </select>
+    <div v-if="mode === 'overview'">
+      <label class="form-label fw-bold">Data</label>
+      <input class="form-control shadow" type="text" ref="dateInput" placeholder="Selecione a data">
     </div>
-    <div v-if="showData">
-      <label class="form-label fw-bold">Data Atualização</label>
-      <input class="form-control shadow" type="text" ref="dateInput" placeholder="Selecione a data" required>
-    </div>
-    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-      <button class="btn btn-primary" @click="$emit('filtrar')">Filtrar</button>
+    <div class="d-flex justify-content-md-end align-items-start">
+      <button class="btn btn-primary w-100 w-md-auto" @click="$emit('filtrar')">Filtrar</button>
     </div>
   </div>
 </template>
@@ -37,11 +30,10 @@ import { useMonitorStore } from '../stores/monitorStore.js'
 
 export default {
   props: {
-    showResponsavel: { type: Boolean, default: true },
-    showData: { type: Boolean, default: true },
+    mode: { type: String, default: 'update' },
   },
   emits: ['filtrar'],
-  setup(props, { emit }) {
+  setup(props) {
     const store = useMonitorStore()
     const dateInput = ref(null)
 
@@ -50,7 +42,7 @@ export default {
     }
 
     onMounted(() => {
-      if (dateInput.value) {
+      if (props.mode === 'overview' && dateInput.value) {
         flatpickr(dateInput.value, {
           locale: 'pt',
           dateFormat: 'd/m/Y',

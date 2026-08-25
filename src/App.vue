@@ -30,4 +30,15 @@ onMounted(() => {
 body { font-family: 'Nunito', sans-serif; background: #f8f9fa; }
 #app { min-height: 100vh; display: flex; flex-direction: column; }
 #app-root { flex: 1; }
+.accordion-collapse {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+.accordion-collapse.show {
+  max-height: 2000px;
+}
+@media (min-width: 768px) {
+  .w-md-auto { width: auto !important; }
+}
 </style>

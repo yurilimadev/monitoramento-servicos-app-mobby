@@ -1,8 +1,8 @@
 <template>
   <div class="row g-4">
     <div class="d-grid gap-4 col-md-3">
-      <FilterPanel @filtrar="onFiltrar" :showResponsavel="false" :showData="true" />
-      <div class="text-center mt-3">
+      <FilterPanel mode="overview" @filtrar="onFiltrar" />
+      <div class="text-center d-none d-md-block mt-3">
         <img class="img-fluid" :src="logoPmn" alt="">
       </div>
     </div>
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useMonitorStore } from '../stores/monitorStore.js'
 import FilterPanel from '../components/FilterPanel.vue'
 import DataTable from '../components/DataTable.vue'

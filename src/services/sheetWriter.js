@@ -14,7 +14,7 @@ export async function upsertDados(dataToSend) {
 
   const resp = await fetch(config.appsScriptUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(payload),
   })
 

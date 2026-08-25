@@ -1,26 +1,75 @@
 <template>
   <div class="col-md-9 h-100 overflow-hidden">
-    <form @submit.prevent="onSubmit">
-      <FilterPanel @filtrar="onFiltrar" />
-      <div class="p-4 border shadow overflow-hidden mt-4">
-        <div class="text-center">
-          <h5>{{ store.selectedSecretaria || '[SECRETARIA]' }}</h5>
-          <p>{{ store.selectedAgrupamento || '[Agrupamento]' }}</p>
-          <button type="button" class="btn btn-outline-info btn-sm mt-2" :class="{ 'd-none': !showPuxarDados }"
-            @click="puxarDados" :disabled="loading">
-            <i class="bi bi-cloud-download"></i> Puxar dados já salvos desta data
-          </button>
+    <div v-if="store.servicesToRender.length > 0" class="p-4 border shadow overflow-hidden">
+      <div class="text-center">
+        <h5>{{ store.selectedSecretaria || '[SECRETARIA]' }}</h5>
+        <p>{{ store.selectedAgrupamento || '[Agrupamento]' }}</p>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Responsável</label>
+          <select class="form-select shadow" v-model="store.selectedResponsavel" required>
+            <option disabled value="">Selecione...</option>
+            <option v-for="r in store.responsaveis" :key="r" :value="r">{{ r }}</option>
+          </select>
         </div>
-        <div class="d-grid gap-4 mt-4 overflow-hidden w-100">
-          <p v-if="store.servicesToRender.length === 0" class="text-center text-muted">
-            Selecione os filtros e clique em "Filtrar" para carregar os serviços.
-          </p>
-          <ServiceCard
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Data Atualização</label>
+          <input class="form-control shadow" type="text" ref="dateInput" placeholder="Selecione a data" required>
+        </div>
+      </div>
+
+      <div class="text-center mb-3">
+        <button type="button" class="btn btn-outline-info btn-sm" :disabled="loading"
+          @click="puxarDados">
+          <i class="bi bi-cloud-download"></i> Puxar dados já salvos desta data
+        </button>
+      </div>
+
+      <form @submit.prevent="onSubmit">
+        <div class="accordion mt-3" id="accordionServicos">
+          <div
             v-for="(svc, idx) in store.servicesToRender"
             :key="idx"
-            :servicoNome="svc.serviço"
-            v-model="serviceData[idx]"
-          />
+            class="accordion-item"
+          >
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button"
+                :class="{ collapsed: openIdx !== idx }"
+                type="button"
+                @click="toggleAccordion(idx)"
+              >
+                <span class="me-2">{{ idx + 1 }}.</span>
+                <span class="flex-grow-1 text-truncate">{{ svc.serviço }}</span>
+                <i
+                  v-if="isFilled(idx)"
+                  class="bi bi-check-circle-fill text-success ms-2"
+                  title="Preenchido"
+                ></i>
+                <i
+                  v-else
+                  class="bi bi-circle text-muted ms-2"
+                  title="Pendente"
+                ></i>
+              </button>
+            </h2>
+            <div
+              class="accordion-collapse"
+              :class="{ show: openIdx === idx }"
+            >
+              <div class="accordion-body">
+                <ServiceCard
+                  :servicoNome="svc.serviço"
+                  v-model="serviceData[idx]"
+                />
+              </div>
+            </div>
+          </div>
+          <p v-if="store.servicesToRender.length === 0" class="text-center text-muted mt-4">
+            Selecione os filtros e clique em "Filtrar" para carregar os serviços.
+          </p>
         </div>
         <hr>
         <div class="row mt-4">
@@ -30,33 +79,67 @@
             </button>
           </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
+
+    <div v-else class="p-4 border shadow overflow-hidden text-center text-muted mt-3">
+      <p>Selecione a Secretaria e o Agrupamento e clique em "Filtrar" para carregar os serviços.</p>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { useMonitorStore } from '../stores/monitorStore.js'
-import FilterPanel from './FilterPanel.vue'
 import ServiceCard from './ServiceCard.vue'
 import { buscarDadosSalvos } from '../services/sheetApi.js'
 import { upsertDados } from '../services/sheetWriter.js'
 
 export default {
-  components: { FilterPanel, ServiceCard },
+  components: { ServiceCard },
   setup() {
     const store = useMonitorStore()
     const serviceData = ref({})
     const submitting = ref(false)
     const loading = ref(false)
+    const dateInput = ref(null)
+    const openIdx = ref(0)
+    let flatpickrInstance = null
 
-    const showPuxarDados = computed(() => store.servicesToRender.length > 0)
-
-    function onFiltrar() {
-      store.filtrarServicos()
-      serviceData.value = {}
+    function toggleAccordion(idx) {
+      openIdx.value = openIdx.value === idx ? -1 : idx
     }
+
+    function isFilled(idx) {
+      const d = serviceData.value[idx]
+      if (!d) return false
+      return (d.aberto > 0 || d.andamento > 0 || d.encerrado > 0) || (d.observacao && d.observacao.trim() !== '')
+    }
+
+    onMounted(() => {
+      store.selectedResponsavel = ''
+      store.selectedData = ''
+    })
+
+    watch(() => store.servicesToRender.length, async (len) => {
+      if (len > 0) {
+        await nextTick()
+        if (dateInput.value && !flatpickrInstance) {
+          flatpickrInstance = flatpickr(dateInput.value, {
+            locale: 'pt',
+            dateFormat: 'd/m/Y',
+            allowInput: true,
+            onChange: (dates, dateStr) => { store.selectedData = dateStr },
+          })
+        }
+      }
+    })
+
+    watch(() => store.selectedData, (val) => {
+      if (flatpickrInstance) {
+        flatpickrInstance.setDate(val || '', true)
+      }
+    })
 
     async function puxarDados() {
       if (!store.selectedData) {
@@ -151,7 +234,7 @@ export default {
       }
     }
 
-    return { store, serviceData, submitting, loading, showPuxarDados, onFiltrar, puxarDados, onSubmit }
+    return { store, serviceData, submitting, loading, dateInput, openIdx, puxarDados, onSubmit, toggleAccordion, isFilled }
   }
 }
 </script>
