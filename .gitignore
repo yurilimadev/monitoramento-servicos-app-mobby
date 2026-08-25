@@ -1,5 +1,5 @@
 # Arquivos de Configuração (Contém chaves de API)
-config.js
+/config.js
 .env*
 *.local
 
