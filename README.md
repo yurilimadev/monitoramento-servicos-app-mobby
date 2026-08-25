@@ -2,6 +2,13 @@
 
 ![Banner](gemini-banner-git.png)
 
+![Vue 3](https://img.shields.io/badge/Vue_3-4FC08D?logo=vue.js&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Bootstrap 5.3](https://img.shields.io/badge/Bootstrap_5.3-7952B3?logo=bootstrap&logoColor=white)
+![Pinia](https://img.shields.io/badge/Pinia-FFD859?logo=pinia&logoColor=black)
+![Google Sheets API](https://img.shields.io/badge/Google_Sheets_API-34A853?logo=googlesheets&logoColor=white)
+![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?logo=githubpages&logoColor=white)
+
 Aplicativo interno para monitoramento de dados transacionais do APP Mobby, permitindo filtrar, atualizar e visualizar informações de serviços por secretaria e agrupamento.
 
 ## Funcionalidades
@@ -91,6 +98,12 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/SEU_ID/exec
 A planilha Google Sheets utilizada como fonte de dados pode ser acessada internamente em:
 
 [https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/](https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/)
+
+## Google Apps Script
+
+O script responsável pela escrita/upsert dos dados está em:
+
+[https://script.google.com/home/projects/1oO7I4WPvqclHC__6bs2HIzaUDKHZyyNjdsfNGmQaGLYC8WTrBqHHR41A/edit](https://script.google.com/home/projects/1oO7I4WPvqclHC__6bs2HIzaUDKHZyyNjdsfNGmQaGLYC8WTrBqHHR41A/edit)
 
 ## Versão
 
