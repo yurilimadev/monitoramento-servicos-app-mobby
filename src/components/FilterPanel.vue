@@ -22,7 +22,8 @@
       <label class="form-label fw-bold">Data</label>
       <input class="form-control shadow" type="text" ref="dateInput" placeholder="Selecione a data">
     </div>
-    <div class="d-flex justify-content-md-end align-items-start">
+    <div class="d-flex gap-2 justify-content-md-end align-items-start">
+      <button class="btn btn-outline-secondary w-100 w-md-auto" @click="$emit('limpar')">Limpar</button>
       <button class="btn btn-primary w-100 w-md-auto" @click="$emit('filtrar')">Filtrar</button>
     </div>
   </div>
@@ -36,7 +37,7 @@ export default {
   props: {
     mode: { type: String, default: 'update' },
   },
-  emits: ['filtrar'],
+  emits: ['filtrar', 'limpar'],
   setup(props) {
     const store = useMonitorStore()
     const dateInput = ref(null)

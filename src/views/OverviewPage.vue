@@ -1,7 +1,7 @@
 <template>
   <div class="row g-4">
     <div class="d-grid gap-4 col-md-3 align-items-start">
-      <FilterPanel mode="overview" @filtrar="onFiltrar" />
+      <FilterPanel mode="overview" @filtrar="onFiltrar" @limpar="onLimpar" />
       <div class="text-center d-none d-md-block mt-3">
         <img class="img-fluid" :src="logoPmn" alt="">
       </div>
@@ -88,7 +88,13 @@ export default {
       })
     })
 
-    return { tableData, tableColumns, onFiltrar, logoPmn }
+    async function onLimpar() {
+      store.resetFilters('overview')
+      await store.loadPlanilhaData()
+      tableData.value = flattenSheetData(store.allPlanilhaData)
+    }
+
+    return { tableData, tableColumns, onFiltrar, onLimpar, logoPmn }
   }
 }
 </script>

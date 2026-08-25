@@ -64,11 +64,22 @@ export const useMonitorStore = defineStore('monitor', () => {
     }
   }
 
+  function resetFilters(mode) {
+    selectedSecretaria.value = ''
+    selectedAgrupamento.value = ''
+    selectedData.value = ''
+    selectedServico.value = ''
+    selectedResponsavel.value = ''
+    if (mode === 'update') {
+      servicesToRender.value = []
+    }
+  }
+
   return {
     referenceData, selectedSecretaria, selectedAgrupamento,
     selectedResponsavel, selectedData, selectedServico, servicesToRender,
     allPlanilhaData, loading,
     secretarias, agrupamentos, responsaveis,
-    loadReferenceData, filtrarServicos, loadPlanilhaData,
+    loadReferenceData, filtrarServicos, loadPlanilhaData, resetFilters,
   }
 })
