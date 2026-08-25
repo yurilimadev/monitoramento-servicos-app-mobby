@@ -9,6 +9,7 @@ export const useMonitorStore = defineStore('monitor', () => {
   const selectedAgrupamento = ref('')
   const selectedResponsavel = ref('')
   const selectedData = ref('')
+  const selectedServico = ref('')
   const servicesToRender = ref([])
   const allPlanilhaData = ref([])
   const loading = ref(false)
@@ -65,7 +66,7 @@ export const useMonitorStore = defineStore('monitor', () => {
 
   return {
     referenceData, selectedSecretaria, selectedAgrupamento,
-    selectedResponsavel, selectedData, servicesToRender,
+    selectedResponsavel, selectedData, selectedServico, servicesToRender,
     allPlanilhaData, loading,
     secretarias, agrupamentos, responsaveis,
     loadReferenceData, filtrarServicos, loadPlanilhaData,

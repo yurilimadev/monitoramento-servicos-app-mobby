@@ -71,6 +71,13 @@ export default {
           return data === store.selectedData
         })
       }
+      if (store.selectedServico) {
+        const termo = store.selectedServico.toLowerCase()
+        filtered = filtered.filter(r => {
+          const servico = (r.serviço || r.servico || '').toLowerCase()
+          return servico.includes(termo)
+        })
+      }
 
       tableData.value = flattenSheetData(filtered)
     }

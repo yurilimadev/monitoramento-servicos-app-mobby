@@ -15,6 +15,10 @@
       </select>
     </div>
     <div v-if="mode === 'overview'">
+      <label class="form-label fw-bold">Serviço</label>
+      <input class="form-control shadow" type="text" v-model="store.selectedServico" placeholder="Digite o nome do serviço">
+    </div>
+    <div v-if="mode === 'overview'">
       <label class="form-label fw-bold">Data</label>
       <input class="form-control shadow" type="text" ref="dateInput" placeholder="Selecione a data">
     </div>
