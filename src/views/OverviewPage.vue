@@ -1,6 +1,6 @@
 <template>
   <div class="row g-4">
-    <div class="d-grid gap-4 col-md-3">
+    <div class="d-grid gap-4 col-md-3 align-items-start">
       <FilterPanel mode="overview" @filtrar="onFiltrar" />
       <div class="text-center d-none d-md-block mt-3">
         <img class="img-fluid" :src="logoPmn" alt="">
