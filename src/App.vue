@@ -16,12 +16,11 @@
 import AppHeader from './components/AppHeader.vue'
 import { onMounted } from 'vue'
 import { useMonitorStore } from './stores/monitorStore.js'
-import { config } from './config.js'
 
 const store = useMonitorStore()
 
 onMounted(() => {
-  store.loadReferenceData(config.csvReferenceUrl)
+  store.loadReferenceData()
 })
 </script>
 

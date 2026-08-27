@@ -5,17 +5,3 @@ export function normalizar(str) {
     .toLowerCase()
     .trim()
 }
-
-export function parseCSV(url) {
-  return new Promise((resolve, reject) => {
-    Papa.parse(url, {
-      download: true,
-      header: true,
-      complete: (results) => {
-        const data = results.data.filter(item => item.secretaria && item.secretaria.trim() !== '')
-        resolve(data)
-      },
-      error: (err) => reject(err),
-    })
-  })
-}

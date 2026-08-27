@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { parseCSV } from '../services/csvParser.js'
-import { fetchDadosDaPlanilha } from '../services/sheetApi.js'
+import { fetchDadosDaPlanilha, fetchReferenceData } from '../services/sheetApi.js'
 
 export const useMonitorStore = defineStore('monitor', () => {
   const referenceData = ref([])
@@ -38,8 +37,8 @@ export const useMonitorStore = defineStore('monitor', () => {
     return resps.sort()
   })
 
-  async function loadReferenceData(url) {
-    referenceData.value = await parseCSV(url)
+  async function loadReferenceData() {
+    referenceData.value = await fetchReferenceData()
   }
 
   function filtrarServicos() {

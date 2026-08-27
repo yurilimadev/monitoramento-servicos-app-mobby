@@ -9,6 +9,14 @@ export async function fetchDadosDaPlanilha() {
   return parseSheetData(json)
 }
 
+export async function fetchReferenceData() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.spreadsheetId}/values/${config.referenceRange}?key=${config.apiKey}`
+  const resp = await fetch(url)
+  if (!resp.ok) throw new Error(`Erro ao ler referencia: ${resp.status}`)
+  const json = await resp.json()
+  return parseSheetData(json)
+}
+
 export async function buscarDadosSalvos(secretaria, agrupamento, data) {
   const dados = await fetchDadosDaPlanilha()
   return dados.filter(row => {
