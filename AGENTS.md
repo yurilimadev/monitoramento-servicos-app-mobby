@@ -37,7 +37,7 @@ src/
 
 ## Fluxo de dados
 
-- **Leitura referência**: CSV local → PapaParse → FilterPanel (popula selects)
+- **Leitura referência**: Google Sheets API v4 (`GET .../values/{range}?key={API_KEY}`) → FilterPanel (popula selects)
 - **Leitura planilha**: Google Sheets API v4 (`GET .../values/{range}?key={API_KEY}`)
 - **Escrita**: POST para Google Apps Script Web App (upsert por `codigo_unico`)
 - **Hash único**: SHA-256 gerado via `crypto.subtle.digest` (quando não existe `codigo_unico` salvo)
@@ -47,7 +47,6 @@ src/
 GitHub Actions (`.github/workflows/deploy.yml`):
 - Cria `.env.production` com secrets do GitHub → `npm run build` → deploy da `dist/` para `gh-pages`
 - Branch `main` aciona deploy automático
-- Base URL: `/monitoramento-servicos-app-mobby/` (configurado em `vite.config.js`)
 
 ## Secrets do GitHub necessários
 
@@ -61,4 +60,7 @@ GitHub Actions (`.github/workflows/deploy.yml`):
 
 - Trabalho ativo em `refactor/vue`
 - PRs de `refactor/vue` → `main`
+- `template/public` — branch pública derivada de `main` com dados sanitizados para open source
+  - Merge de `main` → `template/public` para sincronizar novidades
+  - Ver `README_DEV.md` para instruções de merge
 - Não há testes automatizados nem linter configurado

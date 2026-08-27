@@ -7,7 +7,7 @@
       </section>
     </main>
     <footer class="container-fluid text-center py-3">
-      Desenvolvido por Yuri Dimitri - SEMPLA - 2026
+      Feito com Vue 3 + Google Sheets — adapte para seus dados
     </footer>
   </div>
 </template>

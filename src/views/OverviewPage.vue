@@ -3,7 +3,7 @@
     <div class="d-grid gap-4 col-md-3 col-xl-2 align-items-start">
       <FilterPanel mode="overview" @filtrar="onFiltrar" @limpar="onLimpar" />
       <div class="text-center d-none d-md-block mt-3">
-        <img class="img-fluid" :src="logoPmn" alt="">
+        <img v-if="logoPmn" class="img-fluid" :src="logoPmn" alt="Logo">
       </div>
     </div>
     <div class="col-md-9 col-xl-10">
@@ -27,13 +27,13 @@ import FilterPanel from '../components/FilterPanel.vue'
 import DataTable from '../components/DataTable.vue'
 import BarChart from '../components/BarChart.vue'
 import LineChart from '../components/LineChart.vue'
-import logoPmn from '/logo-pmn.png'
 
 export default {
   components: { FilterPanel, DataTable, BarChart, LineChart },
   setup() {
     const store = useMonitorStore()
     const tableData = ref([])
+    const logoPmn = null
 
     const tableColumns = [
       { key: 'dia_da_atualizacao', label: 'Data' },

@@ -1,6 +1,7 @@
 # Arquivos de Configuração (Contém chaves de API)
 /config.js
-.env*
+.env
+.env.production
 *.local
 
 node_modules/

@@ -1,6 +1,4 @@
-# Monitoramento - APP Mobby
-
-![Banner](gemini-banner-git.png)
+# Monitoramento de Serviços — Template
 
 ![Vue 3](https://img.shields.io/badge/Vue_3-4FC08D?logo=vue.js&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
@@ -10,7 +8,9 @@
 ![Google Sheets API](https://img.shields.io/badge/Google_Sheets_API-34A853?logo=googlesheets&logoColor=white)
 ![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?logo=githubpages&logoColor=white)
 
-Aplicativo interno para monitoramento de dados transacionais do APP Mobby, permitindo filtrar, atualizar e visualizar informações de serviços por secretaria e agrupamento.
+Aplicação Vue 3 + Google Sheets para **monitorar dados transacionais** de serviços públicos (ou qualquer processo que precise de registro periódico). Permite filtrar, atualizar e visualizar informações com gráficos e tabela paginada.
+
+---
 
 ## Funcionalidades
 
@@ -28,38 +28,133 @@ Aplicativo interno para monitoramento de dados transacionais do APP Mobby, permi
 | Estilo | Bootstrap 5.3 + Bootstrap Icons (via CDN) |
 | Data | Flatpickr (via CDN) |
 | Gráficos | Chart.js (via CDN) |
+| Planilha | Google Sheets API v4 + Google Apps Script |
 
-## Fluxo de Dados
+---
 
-```
-Google Sheets API v4 (GET) ── aba transacoes ──→ OverviewPage / "Puxar dados salvos"
-                                                  ↓
-Google Sheets API v4 (GET) ── aba referencia_servicos ──→ FilterPanel (popula selects)
-                                                  ↓
-Google Apps Script (POST)  ──upsert──→ Planilha (escrita)
-```
+## Passo a passo
 
-- **Leitura de referência:** Google Sheets API → aba `referencia_servicos` → popula selects de Secretaria, Agrupamento e Responsável.
-- **Leitura da planilha:** Google Sheets API v4 (`GET /v4/spreadsheets/{id}/values/{range}?key={API_KEY}`).
-- **Escrita:** POST para Google Apps Script Web App, que faz upsert na planilha usando `codigo_unico` como chave (SHA-256 gerado via `crypto.subtle.digest`).
+### Pré-requisitos
 
-## Comandos
+- Node.js 20+
+- Conta Google (Gmail)
+- Conta GitHub
+
+### 1. Crie sua planilha Google Sheets
+
+Use o modelo abaixo como base — faça uma cópia:
+
+**[Modelo de Planilha — Fazer uma cópia](https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/copy)**
+
+A planilha precisa de **duas abas**:
+
+#### Aba `referencia_servicos` (catálogo)
+
+Serve para popular os selects de Secretaria, Agrupamento e Responsável.
+
+| secretaria | nome_agrupamento | serviço | subcategoria | responsavel |
+|---|---|---|---|---|
+| SECRETARIA A | Agrupamento X | Serviço 1 | Categoria A | João |
+| SECRETARIA A | Agrupamento X | Serviço 2 | Categoria B | João |
+| SECRETARIA B | Agrupamento Y | Serviço 3 | | Maria |
+
+#### Aba `transacoes` (lançamentos)
+
+Aqui os dados são registrados — seja manualmente, seja via o formulário do app.
+
+| dia_da_atualizacao | secretaria | nome_agrupamento | serviço | aberto | andamento | encerrado | responsavel | observacao | codigo_unico |
+|---|---|---|---|---|---|---|---|---|---|
+| 01/01/2026 | SECRETARIA A | Agrupamento X | Serviço 1 | 5 | 3 | 2 | João | | a1b2c3... |
+| 02/01/2026 | SECRETARIA A | Agrupamento X | Serviço 1 | 4 | 2 | 4 | João | | d4e5f6... |
+
+> A coluna `codigo_unico` é gerada automaticamente pelo app via SHA-256. Não precisa preencher manualmente.
+
+### 2. Crie o Google Apps Script
+
+O app usa um Web App do Google Apps Script para **escrever/atualizar** dados na planilha.
+
+1. Na sua planilha, vá em **Extensões → Apps Script**
+2. Cole o conteúdo do arquivo [`APPS_SCRIPT.gs`](APPS_SCRIPT.gs) deste repositório
+3. Clique em **Implantar → Novo deployment**
+   - **Tipo:** Web App
+   - **Executar como:** Eu
+   - **Quem tem acesso:** Qualquer pessoa
+4. Copie a **URL do Web App** gerada
+
+### 3. Configure o projeto
 
 ```bash
-npm run dev      # Servidor de desenvolvimento (Vite)
-npm run build    # Produz dist/ para deploy
-npm run preview  # Serve dist/ localmente
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+cp .env.example .env
 ```
 
-## Requisitos para Deploy (GitHub Actions)
+Preencha o arquivo `.env`:
 
-| Secret do GitHub | Finalidade |
+```env
+VITE_SHEETS_API_KEY=AIzaSy...     # Chave da Google Sheets API
+VITE_SPREADSHEET_ID=1ABC...       # ID da sua planilha
+VITE_SHEETS_RANGE=transacoes
+VITE_REFERENCE_RANGE=referencia_servicos
+VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/.../exec
+```
+
+Instale e rode:
+
+```bash
+npm install
+npm run dev
+```
+
+### 4. Deploy com GitHub Pages
+
+O repositório já vem com GitHub Actions configurado (`.github/workflows/deploy.yml`).
+
+No seu repositório no GitHub, vá em **Settings → Secrets and variables → Actions** e adicione:
+
+| Secret | Finalidade |
 |---|---|
 | `SHEETS_API_KEY` | Chave da Google Sheets API v4 |
-| `APPS_SCRIPT_URL` | URL do Web App do Google Apps Script |
-| `SPREADSHEET_ID` | ID da planilha Google Sheets |
+| `SPREADSHEET_ID` | ID da planilha |
+| `APPS_SCRIPT_URL` | URL do Web App do Apps Script |
 
-O deploy é automático via `main` → GitHub Pages (`gh-pages`). Base URL: `/monitoramento-servicos-app-mobby/`.
+Faça push na branch `main` e o deploy será automático.
+
+> Dica: configure também `VITE_BASE_URL` como secret se precisar de uma base URL diferente (ex: `/meu-app/` para GitHub Pages com subpasta).
+
+### 5. Customize
+
+#### Título e identidade visual
+
+Edite estes arquivos:
+
+- `index.html` — título da aba
+- `src/components/AppHeader.vue` — título do header e gradiente (CSS `background: linear-gradient(...)`)
+- `src/App.vue` — footer
+- `public/` — adicione seu próprio logo (faça referência em `UpdatePage.vue` e `OverviewPage.vue`)
+
+#### Colunas da tabela
+
+Em `src/views/OverviewPage.vue`, altere o array `tableColumns`:
+
+```js
+const tableColumns = [
+  { key: 'dia_da_atualizacao', label: 'Data' },
+  { key: 'secretaria', label: 'Secretaria' },
+  // adicione ou remova colunas aqui
+]
+```
+
+#### Nomes das abas da planilha
+
+Se quiser usar nomes diferentes de `transacoes` e `referencia_servicos`, altere no `.env`:
+
+```env
+VITE_SHEETS_RANGE=minha_aba_de_dados
+VITE_REFERENCE_RANGE=meu_catalogo
+```
+
+---
 
 ## Estrutura do Projeto
 
@@ -67,7 +162,7 @@ O deploy é automático via `main` → GitHub Pages (`gh-pages`). Base URL: `/mo
 src/
   config.js             # Lê import.meta.env.VITE_*
   services/
-    csvParser.js        # normalizar() helper (sem PapaParse)
+    csvParser.js        # normalizar() helper
     sheetApi.js         # Leitura via Google Sheets API v4
     sheetWriter.js      # Escrita via Apps Script
   stores/
@@ -85,29 +180,17 @@ src/
     OverviewPage.vue    # Rota /visao-geral (visualização)
 ```
 
-## Configuração local
+## Comandos
 
-Crie um arquivo `.env` na raiz (não versionado):
-
-```env
-VITE_SHEETS_API_KEY=SUA_CHAVE
-VITE_SPREADSHEET_ID=ID_DA_PLANILHA
-VITE_SHEETS_RANGE=transacoes
-VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/SEU_ID/exec
+```bash
+npm run dev      # Servidor de desenvolvimento
+npm run build    # Produz dist/ para deploy
+npm run preview  # Serve dist/ localmente
+node scripts/setup.js  # Script interativo de inicialização
 ```
 
-## Planilha de dados
+---
 
-A planilha Google Sheets utilizada como fonte de dados pode ser acessada internamente em:
+## Licença
 
-[https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/](https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/)
-
-## Google Apps Script
-
-O script responsável pela escrita/upsert dos dados está em:
-
-[https://script.google.com/home/projects/1oO7I4WPvqclHC__6bs2HIzaUDKHZyyNjdsfNGmQaGLYC8WTrBqHHR41A/edit](https://script.google.com/home/projects/1oO7I4WPvqclHC__6bs2HIzaUDKHZyyNjdsfNGmQaGLYC8WTrBqHHR41A/edit)
-
-## Versão
-
-v2.1.0 — Gráficos (barras + linhas), ordenação de colunas, intervalo de datas, dropdown de serviços, layout wide.
+MIT — sinta-se livre para usar, modificar e distribuir.

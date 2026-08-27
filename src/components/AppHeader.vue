@@ -1,7 +1,7 @@
 <template>
   <header class="shadow-lg">
     <div class="container">
-      <h1 class="text-center py-3 text-white">Monitoramento - APP Mobby</h1>
+      <h1 class="text-center py-3 text-white">Monitoramento de Serviços</h1>
       <div class="d-flex justify-content-center gap-3 pb-3">
         <router-link to="/" class="btn fw-bold" :class="isUpdatePage ? 'btn-light' : 'btn-outline-light'">
           Atualizar Dados
