@@ -7,8 +7,8 @@
       </div>
     </div>
     <div class="col-md-9">
-      <DataTable :data="tableData" :columns="tableColumns" />
       <BarChart v-if="tableData.length > 0" :data="tableData" />
+      <DataTable :data="tableData" :columns="tableColumns" />
     </div>
   </div>
 </template>
@@ -70,7 +70,13 @@ export default {
       if (store.selectedDataInicio && store.selectedDataFim) {
         filtered = filtered.filter(r => {
           const data = r.dia_da_atualizacao || r.dia || r.data || ''
-          return data >= store.selectedDataInicio && data <= store.selectedDataFim
+          const [d, m, a] = data.split('/')
+          const dataComp = `${a}${m}${d}`
+          const [di, mi, ai] = store.selectedDataInicio.split('/')
+          const inicioComp = `${ai}${mi}${di}`
+          const [df, mf, af] = store.selectedDataFim.split('/')
+          const fimComp = `${af}${mf}${df}`
+          return dataComp >= inicioComp && dataComp <= fimComp
         })
       }
       if (store.selectedServico) {

@@ -5,11 +5,14 @@
         <thead class="table-dark">
           <tr>
             <th v-for="col in columns" :key="col.key" :class="{ 'sortable': col.sortable !== false }"
-              @click="col.sortable !== false && toggleSort(col.key)" style="cursor: pointer;">
-              {{ col.label }}
-              <span v-if="sortColumn === col.key" class="ms-1">
-                <i v-if="sortDirection === 'asc'" class="bi bi-caret-up-fill small"></i>
-                <i v-else class="bi bi-caret-down-fill small"></i>
+              @click="col.sortable !== false && toggleSort(col.key)"
+              style="cursor: pointer; white-space: nowrap;">
+              <span class="d-inline-flex align-items-center gap-1">
+                {{ col.label }}
+                <span v-if="sortColumn === col.key">
+                  <i v-if="sortDirection === 'asc'" class="bi bi-caret-up-fill"></i>
+                  <i v-else class="bi bi-caret-down-fill"></i>
+                </span>
               </span>
             </th>
           </tr>
