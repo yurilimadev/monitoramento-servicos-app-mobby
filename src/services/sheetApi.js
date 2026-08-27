@@ -17,12 +17,16 @@ export async function fetchReferenceData() {
   return parseSheetData(json)
 }
 
-export async function buscarDadosSalvos(secretaria, agrupamento, data) {
+export async function buscarDadosSalvos(secretaria, agrupamento, dataInicio, dataFim) {
   const dados = await fetchDadosDaPlanilha()
   return dados.filter(row => {
     const matchSec = normalizar(row.secretaria) === normalizar(secretaria)
     const matchAgrup = normalizar(row.nome_agrupamento) === normalizar(agrupamento)
-    const matchData = row.dia_da_atualizacao === data
+    let matchData = true
+    if (dataInicio && dataFim) {
+      const rowData = row.dia_da_atualizacao
+      matchData = rowData >= dataInicio && rowData <= dataFim
+    }
     return matchSec && matchAgrup && matchData
   })
 }

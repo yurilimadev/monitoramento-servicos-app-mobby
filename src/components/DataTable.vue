@@ -4,7 +4,14 @@
       <table class="table table-striped table-hover">
         <thead class="table-dark">
           <tr>
-            <th v-for="col in columns" :key="col.key">{{ col.label }}</th>
+            <th v-for="col in columns" :key="col.key" :class="{ 'sortable': col.sortable !== false }"
+              @click="col.sortable !== false && toggleSort(col.key)" style="cursor: pointer;">
+              {{ col.label }}
+              <span v-if="sortColumn === col.key" class="ms-1">
+                <i v-if="sortDirection === 'asc'" class="bi bi-caret-up-fill small"></i>
+                <i v-else class="bi bi-caret-down-fill small"></i>
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -44,16 +51,39 @@ export default {
   },
   setup(props) {
     const currentPage = ref(1)
+    const sortColumn = ref('')
+    const sortDirection = ref('asc')
 
-    const totalPages = computed(() => Math.ceil(props.data.length / props.pageSize) || 1)
+    const sortedData = computed(() => {
+      if (!sortColumn.value) return props.data
+      const sorted = [...props.data].sort((a, b) => {
+        const aVal = a[sortColumn.value] || ''
+        const bVal = b[sortColumn.value] || ''
+        const cmp = String(aVal).localeCompare(String(bVal), undefined, { numeric: true, sensitivity: 'base' })
+        return sortDirection.value === 'asc' ? cmp : -cmp
+      })
+      return sorted
+    })
+
+    const totalPages = computed(() => Math.ceil(sortedData.value.length / props.pageSize) || 1)
 
     const paginatedData = computed(() => {
       if (currentPage.value > totalPages.value) currentPage.value = totalPages.value
       const start = (currentPage.value - 1) * props.pageSize
-      return props.data.slice(start, start + props.pageSize)
+      return sortedData.value.slice(start, start + props.pageSize)
     })
 
-    return { currentPage, totalPages, paginatedData }
+    function toggleSort(key) {
+      if (sortColumn.value === key) {
+        sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
+      } else {
+        sortColumn.value = key
+        sortDirection.value = 'asc'
+      }
+      currentPage.value = 1
+    }
+
+    return { currentPage, totalPages, paginatedData, sortColumn, sortDirection, toggleSort }
   }
 }
 </script>

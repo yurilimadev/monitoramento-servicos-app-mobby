@@ -16,11 +16,14 @@
     </div>
     <div v-if="mode === 'overview'">
       <label class="form-label fw-bold">Serviço</label>
-      <input class="form-control shadow" type="text" v-model="store.selectedServico" placeholder="Digite o nome do serviço">
+      <input class="form-control shadow" list="servicos-list" v-model="store.selectedServico" placeholder="Digite ou selecione um serviço">
+      <datalist id="servicos-list">
+        <option v-for="s in store.servicos" :key="s" :value="s"></option>
+      </datalist>
     </div>
     <div v-if="mode === 'overview'">
-      <label class="form-label fw-bold">Data</label>
-      <input class="form-control shadow" type="text" ref="dateInput" placeholder="Selecione a data">
+      <label class="form-label fw-bold">Período</label>
+      <input class="form-control shadow" type="text" ref="dateInput" placeholder="Selecione o período">
     </div>
     <div class="d-flex gap-2 justify-content-md-end align-items-start">
       <button class="btn btn-outline-secondary w-100 w-md-auto" @click="$emit('limpar')">Limpar</button>
@@ -30,7 +33,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useMonitorStore } from '../stores/monitorStore.js'
 
 export default {
@@ -51,15 +54,15 @@ export default {
         flatpickr(dateInput.value, {
           locale: 'pt',
           dateFormat: 'd/m/Y',
+          mode: 'range',
           allowInput: true,
-          onChange: (dates, dateStr) => { store.selectedData = dateStr },
+          onChange: (dates, dateStr) => {
+            if (dates.length === 2) {
+              store.selectedDataInicio = dateStr.split(' a ')[0]
+              store.selectedDataFim = dateStr.split(' a ')[1]
+            }
+          },
         })
-      }
-    })
-
-    watch(() => store.selectedData, (val) => {
-      if (dateInput.value && dateInput.value._flatpickr) {
-        dateInput.value._flatpickr.setDate(val || '', true)
       }
     })
 

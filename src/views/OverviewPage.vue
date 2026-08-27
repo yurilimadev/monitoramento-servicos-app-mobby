@@ -8,6 +8,7 @@
     </div>
     <div class="col-md-9">
       <DataTable :data="tableData" :columns="tableColumns" />
+      <BarChart v-if="tableData.length > 0" :data="tableData" />
     </div>
   </div>
 </template>
@@ -17,10 +18,11 @@ import { ref, onMounted } from 'vue'
 import { useMonitorStore } from '../stores/monitorStore.js'
 import FilterPanel from '../components/FilterPanel.vue'
 import DataTable from '../components/DataTable.vue'
+import BarChart from '../components/BarChart.vue'
 import logoPmn from '/logo-pmn.png'
 
 export default {
-  components: { FilterPanel, DataTable },
+  components: { FilterPanel, DataTable, BarChart },
   setup() {
     const store = useMonitorStore()
     const tableData = ref([])
@@ -34,7 +36,7 @@ export default {
       { key: 'andamento', label: 'Andamento' },
       { key: 'encerrado', label: 'Encerrado' },
       { key: 'responsavel', label: 'Responsável' },
-      { key: 'observacao', label: 'Observação' },
+      { key: 'observacao', label: 'Observação', sortable: false },
     ]
 
     function flattenSheetData(raw) {
@@ -65,17 +67,16 @@ export default {
           (r.nome_agrupamento || r.agrupamento || '').toLowerCase() === store.selectedAgrupamento.toLowerCase()
         )
       }
-      if (store.selectedData) {
+      if (store.selectedDataInicio && store.selectedDataFim) {
         filtered = filtered.filter(r => {
           const data = r.dia_da_atualizacao || r.dia || r.data || ''
-          return data === store.selectedData
+          return data >= store.selectedDataInicio && data <= store.selectedDataFim
         })
       }
       if (store.selectedServico) {
-        const termo = store.selectedServico.toLowerCase()
         filtered = filtered.filter(r => {
           const servico = (r.serviço || r.servico || '').toLowerCase()
-          return servico.includes(termo)
+          return servico === store.selectedServico.toLowerCase()
         })
       }
 

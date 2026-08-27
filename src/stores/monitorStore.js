@@ -7,7 +7,8 @@ export const useMonitorStore = defineStore('monitor', () => {
   const selectedSecretaria = ref('')
   const selectedAgrupamento = ref('')
   const selectedResponsavel = ref('')
-  const selectedData = ref('')
+  const selectedDataInicio = ref('')
+  const selectedDataFim = ref('')
   const selectedServico = ref('')
   const servicesToRender = ref([])
   const allPlanilhaData = ref([])
@@ -35,6 +36,15 @@ export const useMonitorStore = defineStore('monitor', () => {
         .filter(r => r && r.trim() !== '')
     )]
     return resps.sort()
+  })
+
+  const servicos = computed(() => {
+    const svcs = [...new Set(
+      allPlanilhaData.value
+        .map(i => i.servico || i.serviço || '')
+        .filter(s => s && s.trim() !== '')
+    )]
+    return svcs.sort()
   })
 
   async function loadReferenceData() {
@@ -66,7 +76,8 @@ export const useMonitorStore = defineStore('monitor', () => {
   function resetFilters(mode) {
     selectedSecretaria.value = ''
     selectedAgrupamento.value = ''
-    selectedData.value = ''
+    selectedDataInicio.value = ''
+    selectedDataFim.value = ''
     selectedServico.value = ''
     selectedResponsavel.value = ''
     if (mode === 'update') {
@@ -76,9 +87,9 @@ export const useMonitorStore = defineStore('monitor', () => {
 
   return {
     referenceData, selectedSecretaria, selectedAgrupamento,
-    selectedResponsavel, selectedData, selectedServico, servicesToRender,
+    selectedResponsavel, selectedDataInicio, selectedDataFim, selectedServico, servicesToRender,
     allPlanilhaData, loading,
-    secretarias, agrupamentos, responsaveis,
+    secretarias, agrupamentos, responsaveis, servicos,
     loadReferenceData, filtrarServicos, loadPlanilhaData, resetFilters,
   }
 })
