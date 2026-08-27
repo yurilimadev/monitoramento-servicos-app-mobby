@@ -42,7 +42,7 @@
                 @click="toggleAccordion(idx)"
               >
                 <span class="me-2">{{ idx + 1 }}.</span>
-                <span class="flex-grow-1 text-truncate">{{ svc.serviço }}</span>
+                <span class="flex-grow-1 text-truncate">{{ svc.servico }}</span>
                 <i
                   v-if="isFilled(idx)"
                   class="bi bi-check-circle-fill text-success ms-2"
@@ -61,7 +61,7 @@
             >
               <div class="accordion-body">
                 <ServiceCard
-                  :servicoNome="svc.serviço"
+                  :servicoNome="svc.servico"
                   v-model="serviceData[idx]"
                 />
               </div>
@@ -157,7 +157,7 @@ export default {
         )
         dados.forEach(reg => {
           const idx = store.servicesToRender.findIndex(s =>
-            s.serviço.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() ===
+            s.servico.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() ===
             (reg.servico || reg.serviço || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
           )
           if (idx >= 0) {
@@ -206,7 +206,7 @@ export default {
         const dados = serviceData.value[i] || {}
         let codigoUnico = dados.codigoUnico || ''
         if (!codigoUnico) {
-          const temp = store.selectedData + store.selectedSecretaria + store.selectedAgrupamento + svc.serviço
+          const temp = store.selectedData + store.selectedSecretaria + store.selectedAgrupamento + svc.servico
           codigoUnico = await gerarHashSHA256(temp)
         }
         dataToSend.push({
@@ -214,7 +214,7 @@ export default {
           dia_da_atualizacao: store.selectedData,
           secretaria: store.selectedSecretaria,
           nome_agrupamento: store.selectedAgrupamento,
-          serviço: svc.serviço,
+          serviço: svc.servico,
           aberto: dados.aberto || 0,
           andamento: dados.andamento || 0,
           encerrado: dados.encerrado || 0,

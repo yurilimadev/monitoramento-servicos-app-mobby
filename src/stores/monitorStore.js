@@ -48,8 +48,8 @@ export const useMonitorStore = defineStore('monitor', () => {
     )
     const seen = new Set()
     servicesToRender.value = raw.filter(i => {
-      if (seen.has(i.serviço)) return false
-      seen.add(i.serviço)
+      if (seen.has(i.servico)) return false
+      seen.add(i.servico)
       return true
     })
   }
