@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useMonitorStore } from '../stores/monitorStore.js'
 
 export default {
@@ -41,9 +41,10 @@ export default {
     mode: { type: String, default: 'update' },
   },
   emits: ['filtrar', 'limpar'],
-  setup(props) {
+  setup(props, { emit }) {
     const store = useMonitorStore()
     const dateInput = ref(null)
+    let fpInstance = null
 
     function onSecretariaChange() {
       store.selectedAgrupamento = ''
@@ -51,18 +52,28 @@ export default {
 
     onMounted(() => {
       if (props.mode === 'overview' && dateInput.value) {
-        flatpickr(dateInput.value, {
+        fpInstance = flatpickr(dateInput.value, {
           locale: 'pt',
           dateFormat: 'd/m/Y',
           mode: 'range',
           allowInput: true,
           onChange: (dates, dateStr) => {
             if (dates.length === 2) {
-              store.selectedDataInicio = dateStr.split(' a ')[0]
-              store.selectedDataFim = dateStr.split(' a ')[1]
+              const parts = dateStr.split(' até ')
+              store.selectedDataInicio = parts[0]
+              store.selectedDataFim = parts[1] || parts[0]
+            } else {
+              store.selectedDataInicio = ''
+              store.selectedDataFim = ''
             }
           },
         })
+      }
+    })
+
+    watch(() => [store.selectedDataInicio, store.selectedDataFim], ([inicio, fim]) => {
+      if (fpInstance && !inicio && !fim) {
+        fpInstance.clear()
       }
     })
 
