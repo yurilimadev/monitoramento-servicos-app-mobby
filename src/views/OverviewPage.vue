@@ -1,13 +1,20 @@
 <template>
   <div class="row g-4">
-    <div class="d-grid gap-4 col-md-3 align-items-start">
+    <div class="d-grid gap-4 col-md-3 col-xl-2 align-items-start">
       <FilterPanel mode="overview" @filtrar="onFiltrar" @limpar="onLimpar" />
       <div class="text-center d-none d-md-block mt-3">
         <img class="img-fluid" :src="logoPmn" alt="">
       </div>
     </div>
-    <div class="col-md-9">
-      <BarChart v-if="tableData.length > 0" :data="tableData" />
+    <div class="col-md-9 col-xl-10">
+      <div v-if="tableData.length > 0" class="row g-3 mb-3">
+        <div class="col-md-6">
+          <BarChart :data="tableData" />
+        </div>
+        <div class="col-md-6">
+          <LineChart :data="tableData" />
+        </div>
+      </div>
       <DataTable :data="tableData" :columns="tableColumns" />
     </div>
   </div>
@@ -19,10 +26,11 @@ import { useMonitorStore } from '../stores/monitorStore.js'
 import FilterPanel from '../components/FilterPanel.vue'
 import DataTable from '../components/DataTable.vue'
 import BarChart from '../components/BarChart.vue'
+import LineChart from '../components/LineChart.vue'
 import logoPmn from '/logo-pmn.png'
 
 export default {
-  components: { FilterPanel, DataTable, BarChart },
+  components: { FilterPanel, DataTable, BarChart, LineChart },
   setup() {
     const store = useMonitorStore()
     const tableData = ref([])

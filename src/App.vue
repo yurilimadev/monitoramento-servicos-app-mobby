@@ -2,7 +2,7 @@
   <div id="app-root">
     <AppHeader />
     <main class="container-fluid">
-      <section class="container my-4">
+      <section class="container-fluid my-4">
         <router-view />
       </section>
     </main>
