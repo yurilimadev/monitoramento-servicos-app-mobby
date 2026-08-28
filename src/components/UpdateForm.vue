@@ -118,7 +118,7 @@ export default {
 
     onMounted(() => {
       store.selectedResponsavel = ''
-      store.selectedData = ''
+      store.selectedDataInicio = ''
     })
 
     watch(() => store.servicesToRender, async (services) => {
@@ -131,20 +131,20 @@ export default {
             locale: 'pt',
             dateFormat: 'd/m/Y',
             allowInput: true,
-            onChange: (dates, dateStr) => { store.selectedData = dateStr },
+            onChange: (dates, dateStr) => { store.selectedDataInicio = dateStr },
           })
         }
       }
     }, { deep: true })
 
-    watch(() => store.selectedData, (val) => {
+    watch(() => store.selectedDataInicio, (val) => {
       if (flatpickrInstance) {
         flatpickrInstance.setDate(val || '', true)
       }
     })
 
     async function puxarDados() {
-      if (!store.selectedData) {
+      if (!store.selectedDataInicio) {
         alert('Por favor, selecione a "Data Atualização" primeiro.')
         return
       }
@@ -153,7 +153,8 @@ export default {
         const dados = await buscarDadosSalvos(
           store.selectedSecretaria,
           store.selectedAgrupamento,
-          store.selectedData
+          store.selectedDataInicio,
+          store.selectedDataInicio
         )
         dados.forEach(reg => {
           const idx = store.servicesToRender.findIndex(s =>
@@ -171,7 +172,7 @@ export default {
           }
         })
         alert(dados.length > 0
-          ? `Foram carregados ${dados.length} registros para a data ${store.selectedData}!`
+          ? `Foram carregados ${dados.length} registros para a data ${store.selectedDataInicio}!`
           : 'Nenhum dado prévio encontrado para esta seleção.')
       } catch (err) {
         console.error(err)
@@ -189,7 +190,7 @@ export default {
     }
 
     async function onSubmit() {
-      if (!store.selectedResponsavel || !store.selectedData) {
+      if (!store.selectedResponsavel || !store.selectedDataInicio) {
         alert('Preencha o Responsável e a Data de Atualização.')
         return
       }
@@ -206,12 +207,12 @@ export default {
         const dados = serviceData.value[i] || {}
         let codigoUnico = dados.codigoUnico || ''
         if (!codigoUnico) {
-          const temp = store.selectedData + store.selectedSecretaria + store.selectedAgrupamento + svc.servico
+          const temp = store.selectedDataInicio + store.selectedSecretaria + store.selectedAgrupamento + svc.servico
           codigoUnico = await gerarHashSHA256(temp)
         }
         dataToSend.push({
           codigo_unico: codigoUnico,
-          dia_da_atualizacao: store.selectedData,
+          dia_da_atualizacao: store.selectedDataInicio,
           secretaria: store.selectedSecretaria,
           nome_agrupamento: store.selectedAgrupamento,
           serviço: svc.servico,
