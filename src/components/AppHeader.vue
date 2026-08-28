@@ -1,7 +1,10 @@
 <template>
   <header class="shadow-lg">
     <div class="container">
-      <h1 class="text-center py-3 text-white">Monitoramento - APP Mobby</h1>
+      <h1 class="text-center py-3 text-white d-flex align-items-center justify-content-center gap-2">
+        <img :src="logoUrl" height="40" alt="MobView">
+        MobView
+      </h1>
       <div class="d-flex justify-content-center gap-3 pb-3">
         <router-link to="/" class="btn fw-bold" :class="isUpdatePage ? 'btn-light' : 'btn-outline-light'">
           Atualizar Dados
@@ -16,6 +19,7 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
+import logoUrl from '/logo-mobview.png'
 const route = useRoute()
 const isUpdatePage = route.path === '/'
 </script>
