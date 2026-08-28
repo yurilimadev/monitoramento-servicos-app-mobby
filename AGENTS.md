@@ -1,4 +1,4 @@
-# AGENTS.md — monitoramento-servicos-app-mobby
+# AGENTS.md — MobView
 
 ## Stack
 
