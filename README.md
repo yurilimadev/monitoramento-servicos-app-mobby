@@ -178,7 +178,18 @@ src/
   views/
     UpdatePage.vue      # Rota / (atualização)
     OverviewPage.vue    # Rota /visao-geral (visualização)
+public/
+  .gitkeep              # Pasta para seus assets (favicon, logo, etc.)
 ```
+
+## Assets personalizados
+
+Coloque suas imagens na pasta `public/`:
+
+- `public/favicon.png` — ícone de aba do navegador
+- `public/logo.png` — logo para o cabeçalho (referencie no `AppHeader.vue` como `import logoUrl from '/logo.png'`)
+
+Arquivos em `public/` são copiados automaticamente para o build.
 
 ## Comandos
 

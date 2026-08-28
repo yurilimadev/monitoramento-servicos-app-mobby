@@ -160,6 +160,7 @@ em uma cópia limpa do template para garantir que funciona.
 - [ ] Verificar se `README.md` é o guia onboarding (não o interno)
 - [ ] Verificar se `README_DEV.md` está presente (não subir para o repositório público se for separado)
 - [ ] Verificar se `logo-pmn.png`, CSV, banner não estão presentes
+- [ ] Verificar se `public/` tem `.gitkeep` (não pode conter arquivos privados)
 - [ ] Rodar `npm run build` — não deve ter erros
 - [ ] Fazer commit: `git commit -m "chore(template): sync with main @ <hash>"`
 - [ ] Fazer push: `git push origin template/public` e/ou `git push public template/public:main`
