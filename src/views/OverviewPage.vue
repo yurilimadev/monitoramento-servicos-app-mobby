@@ -36,13 +36,13 @@ export default {
     const tableData = ref([])
 
     const tableColumns = [
-      { key: 'dia_da_atualizacao', label: 'Data' },
+      { key: 'dia_da_atualizacao', label: 'Data', type: 'date' },
       { key: 'secretaria', label: 'Secretaria' },
       { key: 'nome_agrupamento', label: 'Agrupamento' },
       { key: 'serviço', label: 'Serviço' },
-      { key: 'aberto', label: 'Aberto' },
-      { key: 'andamento', label: 'Andamento' },
-      { key: 'encerrado', label: 'Encerrado' },
+      { key: 'aberto', label: 'Aberto', type: 'number' },
+      { key: 'andamento', label: 'Andamento', type: 'number' },
+      { key: 'encerrado', label: 'Encerrado', type: 'number' },
       { key: 'responsavel', label: 'Responsável' },
       { key: 'observacao', label: 'Observação', sortable: false },
     ]
