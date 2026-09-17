@@ -46,6 +46,25 @@
 <script>
 import { ref, computed } from 'vue'
 
+function parseDateBR(value) {
+  const str = String(value || '').trim()
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+  if (!m) return null
+  const d = Number(m[1])
+  const mo = Number(m[2])
+  const y = Number(m[3])
+  const date = new Date(y, mo - 1, d)
+  if (date.getFullYear() !== y || date.getMonth() !== mo - 1 || date.getDate() !== d) return null
+  return date.getTime()
+}
+
+function parseNumber(value) {
+  const str = String(value ?? '').trim()
+  if (str === '' || !/^-?\d+(\.\d+)?$/.test(str)) return null
+  const n = Number(str)
+  return Number.isFinite(n) ? n : null
+}
+
 export default {
   props: {
     data: { type: Array, default: () => [] },
@@ -59,12 +78,42 @@ export default {
 
     const sortedData = computed(() => {
       if (!sortColumn.value) return props.data
-      const sorted = [...props.data].sort((a, b) => {
-        const aVal = a[sortColumn.value] || ''
-        const bVal = b[sortColumn.value] || ''
-        const cmp = String(aVal).localeCompare(String(bVal), undefined, { numeric: true, sensitivity: 'base' })
-        return sortDirection.value === 'asc' ? cmp : -cmp
-      })
+      const col = props.columns.find(c => c.key === sortColumn.value)
+      const type = col && col.type
+      const sorted = [...props.data]
+
+      if (type === 'date') {
+        sorted.sort((a, b) => {
+          const ka = parseDateBR(a[sortColumn.value])
+          const kb = parseDateBR(b[sortColumn.value])
+          const aBad = ka === null
+          const bBad = kb === null
+          if (aBad && bBad) return 0
+          if (aBad) return 1
+          if (bBad) return -1
+          if (sortDirection.value === 'asc') return ka - kb
+          return kb - ka
+        })
+      } else if (type === 'number') {
+        sorted.sort((a, b) => {
+          const ka = parseNumber(a[sortColumn.value])
+          const kb = parseNumber(b[sortColumn.value])
+          const aBad = ka === null
+          const bBad = kb === null
+          if (aBad && bBad) return 0
+          if (aBad) return 1
+          if (bBad) return -1
+          if (sortDirection.value === 'asc') return ka - kb
+          return kb - ka
+        })
+      } else {
+        sorted.sort((a, b) => {
+          const aVal = a[sortColumn.value] || ''
+          const bVal = b[sortColumn.value] || ''
+          const cmp = String(aVal).localeCompare(String(bVal), undefined, { numeric: true, sensitivity: 'base' })
+          return sortDirection.value === 'asc' ? cmp : -cmp
+        })
+      }
       return sorted
     })
 
