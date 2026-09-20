@@ -46,6 +46,7 @@ export default {
 
     watch([aberto, andamento, encerrado, observacao], () => {
       emit('update:modelValue', {
+        ...props.modelValue,
         aberto: aberto.value,
         andamento: andamento.value,
         encerrado: encerrado.value,

@@ -217,7 +217,7 @@ export default {
           nome_agrupamento: store.selectedAgrupamento,
           serviço: svc.servico,
           aberto: dados.aberto || 0,
-          andamento: dados.andamento || 0,
+          em_andamento: dados.andamento || 0,
           encerrado: dados.encerrado || 0,
           responsavel: store.selectedResponsavel,
           observacao: dados.observacao || '',
