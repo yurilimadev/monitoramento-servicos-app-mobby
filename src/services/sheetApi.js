@@ -17,6 +17,11 @@ export async function fetchReferenceData() {
   return parseSheetData(json)
 }
 
+function dataParaComp(valor) {
+  const m = String(valor || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+  return m ? Number(m[3] + m[2].padStart(2, '0') + m[1].padStart(2, '0')) : null
+}
+
 export async function buscarDadosSalvos(secretaria, agrupamento, dataInicio, dataFim) {
   const dados = await fetchDadosDaPlanilha()
   return dados.filter(row => {
@@ -24,8 +29,10 @@ export async function buscarDadosSalvos(secretaria, agrupamento, dataInicio, dat
     const matchAgrup = normalizar(row.nome_agrupamento) === normalizar(agrupamento)
     let matchData = true
     if (dataInicio && dataFim) {
-      const rowData = row.dia_da_atualizacao
-      matchData = rowData >= dataInicio && rowData <= dataFim
+      const rowData = dataParaComp(row.dia_da_atualizacao)
+      const inicioComp = dataParaComp(dataInicio)
+      const fimComp = dataParaComp(dataFim)
+      matchData = rowData !== null && rowData >= inicioComp && rowData <= fimComp
     }
     return matchSec && matchAgrup && matchData
   })
