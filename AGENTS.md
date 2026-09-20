@@ -44,7 +44,7 @@ src/
 
 - **Leitura referência**: CSV local (raiz: `dados_transacoes_entrada_manual - referencia_servicos.csv`) → PapaParse → FilterPanel (popula selects)
 - **Leitura planilha**: Google Sheets API v4 (`GET .../values/{range}?key={API_KEY}`); aba definida por `VITE_SHEETS_RANGE` (default `transacoes`); aba de referência fixa em `src/config.js` (`referencia_servicos`)
-- **Escrita**: POST para Google Apps Script Web App (upsert por `codigo_unico`). O Apps Script casa as chaves do payload com os headers da aba; chave sem correspondência é **ignorada silenciosamente** (grava vazio). Header real da aba `transacoes` é **`em andamento`** (normaliza para `em_andamento`) — payload deve enviar `em_andamento`, nunca `andamento` (regressão histórica de 08/2026).
+- **Escrita**: POST para Google Apps Script Web App (upsert por `codigo_unico`; código versionado em `AppScriptMonitoramento.gs`). O script casa chaves do payload com headers via `removerAcentos` (remove acentos, **preserva espaços**) e, desde 09/2026, também aceita chaves com espaço substituído por `_`. Header real da aba `transacoes` é **`em andamento`** — payload deve enviar `em_andamento`, nunca `andamento` (regressões: 08/2026 e 09/2026). Cuidado: `|| ''` no script engolia `0` (falsy) — corrigido para `??`.
 - **Hash único**: SHA-256 gerado via `crypto.subtle.digest` (quando não existe `codigo_unico` salvo)
 
 ## Deploy
