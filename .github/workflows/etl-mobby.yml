@@ -1,0 +1,54 @@
+name: ETL Mobby - extracao e carga na planilha
+
+on:
+  schedule:
+    - cron: "0 6 1,8,15,22,29 * *"
+  workflow_dispatch:
+    inputs:
+      inicio:
+        description: "Data inicial do historico (AAAA-MM-DD)"
+        required: false
+        default: "2022-01-01"
+
+concurrency:
+  group: etl-mobby
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instala dependencias
+        run: pip install -r scripts/etl_mobby/requirements.txt
+
+      - name: Extrai, trata e grava na planilha
+        working-directory: scripts/etl_mobby
+        env:
+          TOKEN_MOBBY: ${{ secrets.TOKEN_MOBBY }}
+          APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}
+        run: |
+          python runner.py --inicio "${{ inputs.inicio || '2022-01-01' }}" --enviar
+
+      - name: Email de alerta em falha
+        if: failure()
+        working-directory: scripts/etl_mobby
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_ALERT_TO: ${{ secrets.EMAIL_ALERT_TO }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          EVENTO: ${{ github.event_name }}
+        run: python email_alerta.py
