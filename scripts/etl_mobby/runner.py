@@ -11,7 +11,7 @@ from extracao import extrair_todos
 from etl import resumir_todos
 
 NOME_ABA_ETL = "etl_protocolos"
-RESPONSAVEL_AUTOMACAO = "Automacao ETL"
+RESPONSAVEL_AUTOMACAO = "Yuri"
 TZ = timezone(timedelta(hours=-3), name="America/Natal")
 
 
