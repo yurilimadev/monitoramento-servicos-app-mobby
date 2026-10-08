@@ -38,7 +38,25 @@ src/
   views/
     UpdatePage.vue      # rota / (FilterPanel + UpdateForm)
     OverviewPage.vue    # rota /visao-geral (FilterPanel + DataTable + BarChart + LineChart)
+scripts/
+  etl_mobby/            # pipeline Python (extração Mobby → planilha), ver seção abaixo
+    extracao.py         # API Mobby: 3 órgãos (53=SEMSUR, 46=SEMTAS, 44=SEINFRA), períodos ~6 meses
+    etl.py              # limpeza + agregação por (categoria, status) + qtd por ano na observação
+    runner.py           # orquestra e posta no Apps Script (dry-run por padrão; --enviar postar)
+    email_alerta.py     # e-mail SMTP em falha (chamado pelo workflow)
+AppScriptMonitoramento.gs  # código do Web App (fonte da verdade do Google Apps Script)
 ```
+
+## Pipeline ETL Mobby ( publicación automática em `transacoes`)
+
+- **Agenda**: GitHub Actions `.github/workflows/etl-mobby.yml` — cron `0 6 1,8,15,22,29 * *` (UTC 6h = 3h America/Natal). Testes: `workflow_dispatch` (inputs `inicio`, `forcar_falha`) e variável de repo `ETL_FORCAR_FALHA=true`
+- **Execução local**: `set -a && . ./.env && set +a && python3 scripts/etl_mobby/runner.py --inicio 2022-01-01 [--enviar]`
+- **Destino**: grava **direto na aba `transacoes`** через Apps Script (upsert por `codigo_unico`) — `nome_agrupamento="Automatizado"`, `responsavel="Yuri"`, novo dia = novo snapshot; re-execução no mesmo dia = update. Nunca chama o Mobby pela UI da app (usuário não dispara requisições ao Mobby)
+- **Status**→colunas: `mapear_status` em `etl.py` cobre Aberto/Em Atendimento→andamento/Encerrado-Concluído→encerrado; status desconhecidos aparecem na `observacao`
+- **Falhas**: e-mail via SMTP Gmail (secrets `SMTP_HOST/PORT/USER/PASSWORD/FROM`, destinatário `DIGEST_TO`)
+- **`.env` local**: contém `TOKEN_MOBBY`, `APPS_SCRIPT_URL`, `SMTP_*` — nunca commitar
+- **Clasp**: projeto Apps Script `1oO7I4WP...` (`.clasp.json`); arquivo remoto chama-se **`Código.js`** (não `Code.gs`); `.claspignore` exclui tudo menos `Código.js` e `appsscript.json`; `clasp push` + `clasp create-version` + `clasp deploy -V N -i <deploymentId>` para atualizar a implantação `AKfycbzrnk...` (NUNCA `clasp deploy` sem `-i` — cria implantação nova e perde a URL!)
+- **Cuidado curl**: POST ao Apps Script precisa ser `-d` sem `-X POST` (o redirect 302 vira GET e executa o doPost; `-X POST` quebra)
 
 ## Fluxo de dados
 
