@@ -8,3 +8,5 @@ dist/
 
 *.txt
 !scripts/etl_mobby/requirements.txt
+
+__pycache__/
