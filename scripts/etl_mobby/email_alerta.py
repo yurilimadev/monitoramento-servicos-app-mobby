@@ -5,10 +5,10 @@ import sys
 from email.message import EmailMessage
 
 host = (os.environ.get("SMTP_HOST") or "").strip()
-porta = (os.environ.get("SMTP_PORT") or "").strip()
-user = (os.environ.get("SMTP_USER") or "").strip()
-senha = (os.environ.get("SMTP_PASS") or "").strip()
-dest = (os.environ.get("EMAIL_ALERT_TO") or "").strip()
+porta = (os.environ.get("SMTP_PORT") or "587").strip()
+user = (os.environ.get("SMTP_USER") or os.environ.get("SMTP_FROM") or "").strip()
+senha = (os.environ.get("SMTP_PASSWORD") or os.environ.get("SMTP_PASS") or "").strip()
+dest = (os.environ.get("DIGEST_TO") or os.environ.get("EMAIL_ALERT_TO") or "").strip()
 
 if not all([host, porta, user, senha, dest]):
     print("SMTP nao configurado nos secrets - email nao enviado")
