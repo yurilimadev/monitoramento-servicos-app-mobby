@@ -40,7 +40,7 @@ jobs:
         run: pip install -r scripts/etl_mobby/requirements.txt
 
       - name: Forca falha (teste do alerta)
-        if: inputs.forcar_falha == true
+        if: inputs.forcar_falha == true || vars.ETL_FORCAR_FALHA == 'true'
         run: |
           echo "Falha proposital para testar o email de alerta"
           exit 1
