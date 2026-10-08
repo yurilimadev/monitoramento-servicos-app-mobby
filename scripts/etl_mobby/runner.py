@@ -10,7 +10,7 @@ import requests
 from extracao import extrair_todos
 from etl import resumir_todos
 
-NOME_ABA_ETL = "etl_protocolos"
+NOME_ABA_PADRAO = "transacoes"
 RESPONSAVEL_AUTOMACAO = "Yuri"
 TZ = timezone(timedelta(hours=-3), name="America/Natal")
 
@@ -59,7 +59,7 @@ def main():
     parser.add_argument("--inicio", default="2022-01-01", help="data inicial do histórico (AAAA-MM-DD)")
     parser.add_argument("--fim", default=None, help="data final (AAAA-MM-DD); default: hoje em America/Natal")
     parser.add_argument("--enviar", action="store_true", help="envia ao Apps Script (sem isso, só dry-run)")
-    parser.add_argument("--aba", default=NOME_ABA_ETL, help="aba destino no payload")
+    parser.add_argument("--aba", default=NOME_ABA_PADRAO, help="aba destino no payload (transacoes por padrão)")
     parser.add_argument("--out", default=None, help="salva o payload em JSON neste caminho")
     args = parser.parse_args()
 
