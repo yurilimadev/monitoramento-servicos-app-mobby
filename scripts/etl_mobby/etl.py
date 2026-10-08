@@ -16,7 +16,7 @@ COLUNAS = [
 
 REGRAS_STATUS = [
     ("aberto", ("aberto",)),
-    ("andamento", ("andamento",)),
+    ("andamento", ("andamento", "atendimento")),
     ("encerrado", ("encerrad", "conclu", "finaliz", "resolvid")),
 ]
 
@@ -29,10 +29,16 @@ def normalizar(valor):
 
 
 def extrair_campo(valor, chave):
-    try:
-        return ast.literal_eval(valor).get(chave, "Desconhecido")
-    except (ValueError, SyntaxError, AttributeError, TypeError):
-        return "Desconhecido"
+    if isinstance(valor, dict):
+        return valor.get(chave) or "Desconhecido"
+    if isinstance(valor, list) and valor:
+        return extrair_campo(valor[0], chave)
+    if isinstance(valor, str):
+        try:
+            return ast.literal_eval(valor).get(chave) or "Desconhecido"
+        except (ValueError, SyntaxError, AttributeError, TypeError):
+            pass
+    return "Desconhecido"
 
 
 def mapear_status(status):
