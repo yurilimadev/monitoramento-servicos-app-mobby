@@ -7,3 +7,4 @@ node_modules/
 dist/
 
 *.txt
+!scripts/etl_mobby/requirements.txt
