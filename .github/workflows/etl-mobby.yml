@@ -1,6 +1,9 @@
 name: ETL Mobby - extracao e carga na planilha
 
 on:
+  push:
+    branches:
+      - feat/automatizacao-etl
   schedule:
     - cron: "0 6 1,8,15,22,29 * *"
   workflow_dispatch:
@@ -9,6 +12,11 @@ on:
         description: "Data inicial do historico (AAAA-MM-DD)"
         required: false
         default: "2022-01-01"
+      forcar_falha:
+        description: "Força falha para testar o email de alerta"
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: etl-mobby
@@ -30,6 +38,12 @@ jobs:
 
       - name: Instala dependencias
         run: pip install -r scripts/etl_mobby/requirements.txt
+
+      - name: Forca falha (teste do alerta)
+        if: inputs.forcar_falha == true
+        run: |
+          echo "Falha proposital para testar o email de alerta"
+          exit 1
 
       - name: Extrai, trata e grava na planilha
         working-directory: scripts/etl_mobby
