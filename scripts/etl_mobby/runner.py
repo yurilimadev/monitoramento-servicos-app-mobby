@@ -67,7 +67,7 @@ def main():
     fim = args.fim or hoje_natal.isoformat()
     dia_atualizacao = hoje_natal.strftime("%d/%m/%Y")
 
-    token = os.environ.get("TOKEN_MOBBY")
+    token = (os.environ.get("TOKEN_MOBBY") or "").strip()
     url = os.environ.get("APPS_SCRIPT_URL")
     if args.enviar and not url:
         print("ERRO: APPS_SCRIPT_URL nao definida", file=sys.stderr)
