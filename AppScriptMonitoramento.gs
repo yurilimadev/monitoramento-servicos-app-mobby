@@ -1,4 +1,5 @@
-const SPREADSHEET_ID = '1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I';
+const PROP_SPREADSHEET_ID = 'SPREADSHEET_ID';
+const SPREADSHEET_ID_PADRAO = '18zcBi2PG2-8R8F6fOLHbXnAJGQwLgJC181_md4nOPjo';
 const ABA_TRANSACOES = 'transacoes';
 const ABA_ETL = 'etl_protocolos';
 const HEADERS_PADRAO = [
@@ -28,27 +29,54 @@ function doPost(e) {
       resultado = upsertLinhas(sheet, params.data || []);
     }
 
-    return ContentService.createTextOutput(JSON.stringify({ success: true, ...resultado }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return json({ success: true, ...resultado });
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return json({ success: false, error: err.toString() });
   }
 }
 
 function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({ error: 'Use POST' }))
-    .setMimeType(ContentService.MimeType.JSON);
+  try {
+    const ss = SpreadsheetApp.openById(obterSpreadsheetId());
+    return json({
+      ok: true,
+      spreadsheetId: obterSpreadsheetId(),
+      abas: ss.getSheets().map(s => {
+        const colunas = s.getLastColumn();
+        const cabecalhos = colunas > 0
+          ? s.getRange(1, 1, 1, colunas).getValues()[0]
+          : [];
+        return {
+          nome: s.getName(),
+          linhas: Math.max(0, s.getLastRow() - 1),
+          colunas,
+          cabecalhos,
+        };
+      }),
+    });
+  } catch (err) {
+    return json({ ok: false, error: err.toString() });
+  }
 }
 
 function doOptions(e) {
   return ContentService
     .createTextOutput('')
-    .setMimeType(ContentService.MimeType.TEXT)
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+function json(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function obterSpreadsheetId() {
+  return PropertiesService.getScriptProperties().getProperty(PROP_SPREADSHEET_ID) || SPREADSHEET_ID_PADRAO;
 }
 
 function garantirAba(nome) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ss = SpreadsheetApp.openById(obterSpreadsheetId());
   let sheet = ss.getSheetByName(nome);
   if (!sheet) {
     sheet = ss.insertSheet(nome);
