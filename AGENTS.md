@@ -53,15 +53,20 @@ AppScriptMonitoramento.gs  # código do Web App (fonte da verdade do Google Apps
 - **Execução local**: `set -a && . ./.env && set +a && python3 scripts/etl_mobby/runner.py --inicio 2022-01-01 [--enviar]`
 - **Destino**: grava **direto na aba `transacoes`** через Apps Script (upsert por `codigo_unico`) — `nome_agrupamento="Automatizado"`, `responsavel="Yuri"`, novo dia = novo snapshot; re-execução no mesmo dia = update. Nunca chama o Mobby pela UI da app (usuário não dispara requisições ao Mobby)
 - **Status**→colunas: `mapear_status` em `etl.py` cobre Aberto/Em Atendimento→andamento/Encerrado-Concluído→encerrado; status desconhecidos aparecem na `observacao`
-- **Falhas**: e-mail via SMTP Gmail (secrets `SMTP_HOST/PORT/USER/PASSWORD/FROM`, destinatário `DIGEST_TO`)
-- **`.env` local**: contém `TOKEN_MOBBY`, `APPS_SCRIPT_URL`, `SMTP_*` — nunca commitar
-- **Clasp**: projeto Apps Script `1oO7I4WP...` (`.clasp.json`); arquivo remoto chama-se **`Código.js`** (não `Code.gs`); `.claspignore` exclui tudo menos `Código.js` e `appsscript.json`; `clasp push` + `clasp create-version` + `clasp deploy -V N -i <deploymentId>` para atualizar a implantação `AKfycbzrnk...` (NUNCA `clasp deploy` sem `-i` — cria implantação nova e perde a URL!)
+- **Falhas**: e-mail via SMTP Gmail (secrets `SMTP_HOST/PORT/USER/PASSWORD/FROM`, destinatário `DIGEST_TO`); `email_alerta.py` aceita `ALERTA_TITULO`/`ALERTA_MENSAGEM` para reuso em outros workflows
+- **`.env` local**: contém `TOKEN_MOBBY`, `APPS_SCRIPT_URL`, `SMTP_*` — nunca commitar. `.env.local` contém as `VITE_*` do frontend
+- **Agendamento**: `schedule` do GitHub Actions **só roda no branch default (`main`)**; enquanto o workflow estiver só em branch `feat/*`, o cron não dispara
+- **Backup**: cada run salva `backup/etl-AAAA-MM-DD.json` e publica como artifact (90 dias); o health check diário exporta as abas em CSV e também publica artifact
+- **Clasp**: projeto Apps Script `1oO7I4WP...` (`.clasp.json`); arquivo remoto chama-se **`Código.js`** (não `Code.gs`); `npm run apps-script:sync` copia `AppScriptMonitoramento.gs` → `Código.js`; `.claspignore` exclui tudo menos `Código.js` e `appsscript.json`; `clasp push` + `clasp create-version` + `clasp deploy -V N -i <deploymentId>` para atualizar a implantação `AKfycbzrnk...` (NUNCA `clasp deploy` sem `-i` — cria implantação nova e perde a URL!)
+- **ID da planilha**: `SPREADSHEET_ID` pode ser sobrescrito por **Script Properties** no Apps Script; o fallback fica em `SPREADSHEET_ID_PADRAO`. Trocar de planilha não exige redeploy de código (só property + secret do GitHub + rebuild do front)
 - **Cuidado curl**: POST ao Apps Script precisa ser `-d` sem `-X POST` (o redirect 302 vira GET e executa o doPost; `-X POST` quebra)
 
 ## Fluxo de dados
 
-- **Leitura referência**: CSV local (raiz: `dados_transacoes_entrada_manual - referencia_servicos.csv`) → PapaParse → FilterPanel (popula selects)
-- **Leitura planilha**: Google Sheets API v4 (`GET .../values/{range}?key={API_KEY}`); aba definida por `VITE_SHEETS_RANGE` (default `transacoes`); aba de referência fixa em `src/config.js` (`referencia_servicos`)
+- **Planilha atual**: `18zcBi2PG2-8R8F6fOLHbXnAJGQwLgJC181_md4nOPjo` (cópia recuperada em 10/2026). O dono ainda é conta individual (`ywky.galvao@natal.rn.gov.br`); `dimitri.limaf@gmail.com` tem `canEdit`/`canShare`. **Migrar para Unidade compartilhada quando houver acesso ao domínio** e manter ao menos 2 proprietários
+- **Leitura referência**: Google Sheets API v4 na aba `VITE_REFERENCE_RANGE` (default `referencia_servicos`) → FilterPanel (popula selects). O CSV local é legado/referência manual
+- **Leitura planilha**: Google Sheets API v4 (`GET .../values/{range}?key={API_KEY}`); aba definida por `VITE_SHEETS_RANGE` (default `transacoes`). A planilha precisa estar pública como “Qualquer pessoa com o link → Leitor”
+- **Erros de leitura**: o store expõe `error`; `App.vue` mostra banner com “Tentar novamente”. `src/config.js` valida `VITE_*` e mensagens de 403 incluem dica de compartilhamento
 - **Escrita**: POST para Google Apps Script Web App (upsert por `codigo_unico`; código versionado em `AppScriptMonitoramento.gs`). O script casa chaves do payload com headers via `removerAcentos` (remove acentos, **preserva espaços**) e, desde 09/2026, também aceita chaves com espaço substituído por `_`. Header real da aba `transacoes` é **`em andamento`** — payload deve enviar `em_andamento`, nunca `andamento` (regressões: 08/2026 e 09/2026). Cuidado: `|| ''` no script engolia `0` (falsy) — corrigido para `??`.
 - **Hash único**: SHA-256 gerado via `crypto.subtle.digest` (quando não existe `codigo_unico` salvo)
 
@@ -69,7 +74,7 @@ AppScriptMonitoramento.gs  # código do Web App (fonte da verdade do Google Apps
 
 GitHub Actions (`.github/workflows/deploy.yml`):
 - Cria `.env.production` com secrets do GitHub → `npm ci` → `npm run build` → deploy da `dist/` para branch `gh-pages`
-- Apenas push em `main` aciona deploy
+- Push em `main` ou `workflow_dispatch` manual aciona o deploy (necessário reexecutar após trocar secrets)
 - Base URL: `/monitoramento-servicos-app-mobby/` (em `vite.config.js`) — URLs internas devem respeitar hash routing por isso
 
 ## Env vars
@@ -79,6 +84,7 @@ GitHub Actions (`.github/workflows/deploy.yml`):
 | `VITE_SHEETS_API_KEY` | Chave da Google Sheets API v4 (secret GitHub: `SHEETS_API_KEY`) |
 | `VITE_SPREADSHEET_ID` | ID da planilha (secret: `SPREADSHEET_ID`) |
 | `VITE_SHEETS_RANGE` | Aba de leitura (secret-free; CI fixa `transacoes`) |
+| `VITE_REFERENCE_RANGE` | Aba de referência (secret-free; default `referencia_servicos`) |
 | `VITE_APPS_SCRIPT_URL` | URL do Web App do Google Apps Script (secret: `APPS_SCRIPT_URL`) |
 
 ## Branch & PR

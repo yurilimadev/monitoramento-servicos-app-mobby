@@ -87,26 +87,42 @@ src/
 
 ## Configuração local
 
-Crie um arquivo `.env` na raiz (não versionado):
+Crie um arquivo `.env.local` na raiz (não versionado). O `.env` é usado apenas pelo pipeline ETL/SMTP:
 
 ```env
 VITE_SHEETS_API_KEY=SUA_CHAVE
 VITE_SPREADSHEET_ID=ID_DA_PLANILHA
 VITE_SHEETS_RANGE=transacoes
+VITE_REFERENCE_RANGE=referencia_servicos
 VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/SEU_ID/exec
 ```
 
 ## Planilha de dados
 
-A planilha Google Sheets utilizada como fonte de dados pode ser acessada internamente em:
+A planilha Google Sheets utilizada como fonte de dados (cópia recuperada em 10/2026) está em:
 
-[https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/](https://docs.google.com/spreadsheets/d/1Delbh5o2f6cX9lH1WFRFJ3Kic131BXUKm4ng3oOIK2I/)
+[https://docs.google.com/spreadsheets/d/18zcBi2PG2-8R8F6fOLHbXnAJGQwLgJC181_md4nOPjo/](https://docs.google.com/spreadsheets/d/18zcBi2PG2-8R8F6fOLHbXnAJGQwLgJC181_md4nOPjo/)
+
+> A planilha precisa estar compartilhada como **“Qualquer pessoa com o link → Leitor”** para a leitura via API key.
+> Enquanto não houver acesso ao domínio da prefeitura, a propriedade continua em conta individual.
+> **Próximo passo recomendado:** mover para uma **Unidade compartilhada** do Workspace e adicionar ao menos 2 proprietários.
 
 ## Google Apps Script
 
 O script responsável pela escrita/upsert dos dados está em:
 
 [https://script.google.com/home/projects/1oO7I4WPvqclHC__6bs2HIzaUDKHZyyNjdsfNGmQaGLYC8WTrBqHHR41A/edit](https://script.google.com/home/projects/1oO7I4WPvqclHC__6bs2HIzaUDKHZyyNjdsfNGmQaGLYC8WTrBqHHR41A/edit)
+
+- `AppScriptMonitoramento.gs` é a fonte versionada; `npm run apps-script:sync` copia para `Código.js` (arquivo enviado pelo clasp).
+- O ID da planilha vem de **Script Properties** (`SPREADSHEET_ID`) e cai no `SPREADSHEET_ID_PADRAO` do código se a propriedade não existir.
+- O `doGet` do Web App retorna um diagnóstico (`ok`, `spreadsheetId` e nomes/linhas das abas) sem expor dados.
+
+## Backup e monitoramento
+
+- **Health check diário** (`.github/workflows/healthcheck-planilha.yml`): valida leitura via Sheets API e escrita via Apps Script, gera CSVs de `transacoes`/`referencia_servicos`/`etl_protocolos` e publica como artifact (90 dias). Em falha, envia e-mail via SMTP.
+- **Snapshot do ETL**: cada execução salva o payload em `backup/etl-AAAA-MM-DD.json` e publica como artifact.
+- **Backup local**: baixe periodicamente o `.xlsx` da planilha e guarde fora do Drive (o repositório ignora `backup/` e `*.xlsx`).
+- Artifacts do GitHub expiram; para retenção longa, copie para um repositório privado ou storage externo.
 
 ## Versão
 
