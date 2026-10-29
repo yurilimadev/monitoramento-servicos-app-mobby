@@ -13,6 +13,7 @@ export const useMonitorStore = defineStore('monitor', () => {
   const servicesToRender = ref([])
   const allPlanilhaData = ref([])
   const loading = ref(false)
+  const error = ref('')
 
   const secretarias = computed(() => {
     const secs = [...new Set(referenceData.value.map(i => i.secretaria))]
@@ -48,7 +49,14 @@ export const useMonitorStore = defineStore('monitor', () => {
   })
 
   async function loadReferenceData() {
-    referenceData.value = await fetchReferenceData()
+    error.value = ''
+    try {
+      referenceData.value = await fetchReferenceData()
+    } catch (err) {
+      referenceData.value = []
+      error.value = err?.message || String(err)
+      console.error('Erro ao carregar referência:', err)
+    }
   }
 
   function filtrarServicos() {
@@ -66,11 +74,24 @@ export const useMonitorStore = defineStore('monitor', () => {
 
   async function loadPlanilhaData() {
     loading.value = true
+    error.value = ''
     try {
       allPlanilhaData.value = await fetchDadosDaPlanilha()
+    } catch (err) {
+      allPlanilhaData.value = []
+      error.value = err?.message || String(err)
+      console.error('Erro ao carregar planilha:', err)
     } finally {
       loading.value = false
     }
+  }
+
+  async function reloadAll() {
+    await Promise.all([loadReferenceData(), loadPlanilhaData()])
+  }
+
+  function limparErro() {
+    error.value = ''
   }
 
   function resetFilters(mode) {
@@ -88,8 +109,8 @@ export const useMonitorStore = defineStore('monitor', () => {
   return {
     referenceData, selectedSecretaria, selectedAgrupamento,
     selectedResponsavel, selectedDataInicio, selectedDataFim, selectedServico, servicesToRender,
-    allPlanilhaData, loading,
+    allPlanilhaData, loading, error,
     secretarias, agrupamentos, responsaveis, servicos,
-    loadReferenceData, filtrarServicos, loadPlanilhaData, resetFilters,
+    loadReferenceData, filtrarServicos, loadPlanilhaData, reloadAll, limparErro, resetFilters,
   }
 })

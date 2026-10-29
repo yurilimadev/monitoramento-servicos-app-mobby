@@ -1,0 +1,79 @@
+name: ETL Mobby - extracao e carga na planilha
+
+on:
+  push:
+    branches:
+      - feat/automatizacao-etl
+  schedule:
+    - cron: "0 6 1,8,15,22,29 * *"
+  workflow_dispatch:
+    inputs:
+      inicio:
+        description: "Data inicial do historico (AAAA-MM-DD)"
+        required: false
+        default: "2022-01-01"
+      forcar_falha:
+        description: "Força falha para testar o email de alerta"
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: etl-mobby
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instala dependencias
+        run: pip install -r scripts/etl_mobby/requirements.txt
+
+      - name: Forca falha (teste do alerta)
+        if: inputs.forcar_falha == true || vars.ETL_FORCAR_FALHA == 'true'
+        run: |
+          echo "Falha proposital para testar o email de alerta"
+          exit 1
+
+      - name: Extrai, trata e grava na planilha
+        working-directory: scripts/etl_mobby
+        env:
+          TOKEN_MOBBY: ${{ secrets.TOKEN_MOBBY }}
+          APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}
+        run: |
+          mkdir -p ../../backup
+          python runner.py --inicio "${{ inputs.inicio || '2022-01-01' }}" --enviar --out "../../backup/etl-$(date -u +%F).json"
+
+      - name: Publica artifact do snapshot ETL
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: etl-snapshot-${{ github.run_id }}
+          path: backup/
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Email de alerta em falha
+        if: failure()
+        working-directory: scripts/etl_mobby
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          DIGEST_TO: ${{ secrets.DIGEST_TO }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          EVENTO: ${{ github.event_name }}
+        run: python email_alerta.py

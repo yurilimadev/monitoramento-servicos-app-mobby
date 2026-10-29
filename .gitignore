@@ -7,3 +7,15 @@ node_modules/
 dist/
 
 *.txt
+!scripts/etl_mobby/requirements.txt
+
+__pycache__/
+
+# clasp (gerados a partir de AppScriptMonitoramento.gs)
+Código.js
+Code.gs
+.clasprc.json
+
+# backups locais / gerados pelos workflows
+backup/
+*.xlsx

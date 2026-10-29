@@ -1,20 +1,36 @@
-import { config } from '../config.js'
+import { config, validarConfigLeitura } from '../config.js'
 import { normalizar } from './csvParser.js'
 
-export async function fetchDadosDaPlanilha() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.spreadsheetId}/values/${config.range}?key=${config.apiKey}`
+async function fetchAba(range, rotulo) {
+  validarConfigLeitura()
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.spreadsheetId}/values/${encodeURIComponent(range)}?key=${config.apiKey}`
   const resp = await fetch(url)
-  if (!resp.ok) throw new Error(`Erro ao ler planilha: ${resp.status}`)
+  if (!resp.ok) {
+    const detalhe = await extrairErro(resp)
+    const dica = resp.status === 403
+      ? ' Verifique se a planilha está compartilhada como "Qualquer pessoa com o link → Leitor".'
+      : ''
+    throw new Error(`Erro ao ler ${rotulo} (${resp.status})${detalhe ? ': ' + detalhe : ''}.${dica}`)
+  }
   const json = await resp.json()
   return parseSheetData(json)
 }
 
+async function extrairErro(resp) {
+  try {
+    const json = await resp.json()
+    return json?.error?.message || ''
+  } catch {
+    return ''
+  }
+}
+
+export async function fetchDadosDaPlanilha() {
+  return fetchAba(config.range, 'planilha')
+}
+
 export async function fetchReferenceData() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.spreadsheetId}/values/${config.referenceRange}?key=${config.apiKey}`
-  const resp = await fetch(url)
-  if (!resp.ok) throw new Error(`Erro ao ler referencia: ${resp.status}`)
-  const json = await resp.json()
-  return parseSheetData(json)
+  return fetchAba(config.referenceRange, 'referência')
 }
 
 function dataParaComp(valor) {
@@ -46,7 +62,7 @@ function parseSheetData(json) {
     const obj = {}
     headers.forEach((h, i) => {
       const key = normalizar(h).replace(/\s+/g, '_')
-      obj[key] = row[i] || ''
+      obj[key] = row[i] ?? ''
     })
     return obj
   })
