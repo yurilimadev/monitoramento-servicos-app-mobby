@@ -1,7 +1,8 @@
-import { config } from '../config.js'
+import { config, validarConfigEscrita } from '../config.js'
 import { normalizar } from './csvParser.js'
 
 export async function upsertDados(dataToSend) {
+  validarConfigEscrita()
   const payload = {
     data: dataToSend.map(row => {
       const obj = {}
@@ -18,6 +19,10 @@ export async function upsertDados(dataToSend) {
     body: JSON.stringify(payload),
   })
 
-  if (!resp.ok) throw new Error(`Erro ao enviar: ${resp.status}`)
-  return resp.json()
+  if (!resp.ok) throw new Error(`Erro ao enviar (${resp.status})`)
+  const json = await resp.json()
+  if (json && json.success === false) {
+    throw new Error(`Apps Script recusou a gravação: ${json.error || 'erro desconhecido'}`)
+  }
+  return json
 }

@@ -176,7 +176,7 @@ export default {
           : 'Nenhum dado prévio encontrado para esta seleção.')
       } catch (err) {
         console.error(err)
-        alert('Erro ao buscar dados na planilha.')
+        alert(`Erro ao buscar dados na planilha: ${err?.message || 'erro desconhecido'}`)
       } finally {
         loading.value = false
       }
@@ -231,7 +231,7 @@ export default {
         window.location.reload()
       } catch (err) {
         console.error('Erro:', err)
-        alert('Erro ao salvar dados.')
+        alert(`Erro ao salvar dados: ${err?.message || 'erro desconhecido'}`)
       } finally {
         submitting.value = false
       }

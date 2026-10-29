@@ -2,6 +2,17 @@
   <div id="app-root">
     <AppHeader />
     <main class="container-fluid">
+      <div v-if="store.error" class="container-fluid mt-3">
+        <div class="alert alert-danger d-flex flex-column flex-md-row align-items-md-center gap-2" role="alert">
+          <span class="flex-grow-1">
+            <strong>Falha ao carregar os dados da planilha.</strong>
+            {{ store.error }}
+          </span>
+          <button type="button" class="btn btn-sm btn-outline-danger" @click="store.reloadAll()">
+            Tentar novamente
+          </button>
+        </div>
+      </div>
       <section class="container-fluid my-4">
         <router-view />
       </section>

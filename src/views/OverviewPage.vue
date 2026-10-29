@@ -97,10 +97,9 @@ export default {
       tableData.value = flattenSheetData(filtered)
     }
 
-    onMounted(() => {
-      store.loadPlanilhaData().then(() => {
-        tableData.value = flattenSheetData(store.allPlanilhaData)
-      })
+    onMounted(async () => {
+      await store.loadPlanilhaData()
+      tableData.value = flattenSheetData(store.allPlanilhaData)
     })
 
     async function onLimpar() {
