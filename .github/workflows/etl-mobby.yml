@@ -51,7 +51,17 @@ jobs:
           TOKEN_MOBBY: ${{ secrets.TOKEN_MOBBY }}
           APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}
         run: |
-          python runner.py --inicio "${{ inputs.inicio || '2022-01-01' }}" --enviar
+          mkdir -p ../../backup
+          python runner.py --inicio "${{ inputs.inicio || '2022-01-01' }}" --enviar --out "../../backup/etl-$(date -u +%F).json"
+
+      - name: Publica artifact do snapshot ETL
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: etl-snapshot-${{ github.run_id }}
+          path: backup/
+          if-no-files-found: warn
+          retention-days: 90
 
       - name: Email de alerta em falha
         if: failure()

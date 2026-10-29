@@ -18,12 +18,15 @@ repo = os.environ.get("REPO", "?")
 run_id = os.environ.get("RUN_ID", "")
 evento = os.environ.get("EVENTO", "?")
 
+assunto = (os.environ.get("ALERTA_TITULO") or "").strip()
+mensagem = (os.environ.get("ALERTA_MENSAGEM") or "").strip() or "O workflow do ETL Mobby falhou."
+
 msg = EmailMessage()
-msg["Subject"] = f"[ETL Mobby] FALHA - {repo} (evento: {evento})"
+msg["Subject"] = assunto or f"[ETL Mobby] FALHA - {repo} (evento: {evento})"
 msg["From"] = user
 msg["To"] = ", ".join(d.strip() for d in dest.split(",") if d.strip())
 msg.set_content(
-    "O workflow do ETL Mobby falhou.\n\n"
+    f"{mensagem}\n\n"
     f"Repositorio: {repo}\n"
     f"Evento: {evento}\n"
     f"Logs: https://github.com/{repo}/actions/runs/{run_id}\n\n"

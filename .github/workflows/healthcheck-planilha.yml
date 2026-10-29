@@ -1,0 +1,66 @@
+name: Health check e backup da planilha
+
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: healthcheck-planilha
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verifica leitura (Sheets API) e gera backup CSV
+        env:
+          SHEETS_API_KEY: ${{ secrets.SHEETS_API_KEY }}
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+          BACKUP_DIR: backup
+        run: python scripts/etl_mobby/backup_planilha.py
+
+      - name: Verifica escrita (Apps Script doGet)
+        env:
+          APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}
+        run: |
+          set -euo pipefail
+          resp=$(curl -sS -L "$APPS_SCRIPT_URL")
+          echo "$resp"
+          python3 -c 'import json,sys; d=json.loads(sys.argv[1]); assert d.get("ok") is True, d' "$resp"
+
+      - name: Publica artifact de backup
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-planilha-${{ github.run_id }}
+          path: backup/
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Email de alerta em falha
+        if: failure()
+        working-directory: scripts/etl_mobby
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          DIGEST_TO: ${{ secrets.DIGEST_TO }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          EVENTO: ${{ github.event_name }}
+          ALERTA_TITULO: "[MobView] Falha no health check da planilha"
+          ALERTA_MENSAGEM: "O health check da planilha falhou: leitura via Sheets API e/ou escrita via Apps Script estão inacessíveis."
+        run: python email_alerta.py
